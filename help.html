@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Help | Modefx</title>
+  <meta name="description" content="Answers about Modefx, payments and simulated trading.">
+  <meta name="theme-color" content="#03060F">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png">
+  <link rel="apple-touch-icon" href="assets/icon-180.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="help">
+  <div class="bgvid" aria-hidden="true">
+    <video autoplay muted loop playsinline preload="auto" poster="assets/bg-poster.jpg"><source src="assets/bg.mp4" type="video/mp4"><source src="assets/bg.webm" type="video/webm"></video>
+  </div>
+  <div id="loader" aria-hidden="true" role="status" aria-label="Loading">
+    <video muted playsinline preload="auto"><source src="assets/loader.mp4" type="video/mp4"><source src="assets/loader.webm" type="video/webm"></video>
+  </div>
+  <header class="nav">
+    <a class="brand" href="index.html" aria-label="Modefx home">
+      <img src="assets/mark.png" alt="" width="34" height="23">
+      <span>Modefx</span>
+    </a>
+    <nav aria-label="Main"><a href="index.html">Home</a><a href="markets.html">Markets</a><a href="plans.html">Plans</a><a href="help.html" aria-current="page">Help</a></nav>
+    <a class="btn btn-ghost" id="nav-account" href="account.html">Sign in</a>
+  </header>
+  <main class="page">
+    <div class="page-head">
+      <h1>Help</h1>
+      <p>Answers to the most common questions about Modefx.</p>
+    </div>
+
+    <section class="sheet">
+      <div class="faq">
+        <details>
+          <summary>Is my money at risk on Modefx?</summary>
+          <p>No. Trades on Modefx use a virtual balance. The only real money you spend here is the plan price you choose to pay.</p>
+        </details>
+        <details>
+          <summary>Will I make money if I subscribe?</summary>
+          <p>No one can promise that, and we don't. Plans give you practice tools, analytics and lessons. Results in real markets depend on many things outside this site, and most people who trade leveraged products lose money.</p>
+        </details>
+        <details>
+          <summary>How do I pay?</summary>
+          <p>Choose a plan, enter your M-Pesa number, and approve the prompt on your phone with your PIN. Your plan activates once payment is confirmed. Modefx never sees your PIN.</p>
+        </details>
+        <details>
+          <summary>I paid but my plan didn't activate.</summary>
+          <p>Confirmation can take a minute or two. If it still hasn't activated, contact support with your M-Pesa confirmation message and we'll fix it.</p>
+        </details>
+        <details>
+          <summary>Are the prices on the site live?</summary>
+          <p>Prices marked demo are samples. When live or delayed market data is added, it will be labelled with its source, and AI-written commentary will be labelled separately from verified data.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="sheet" id="support" hidden>
+      <h2>Support</h2>
+      <p class="sheet-sub">Payment problem or a question about your account? Reach us here.</p>
+      <div class="cta-row" style="justify-content:flex-start">
+        <a class="btn btn-ghost" id="support-email" href="#" hidden>Email support</a>
+        <a class="btn btn-ghost" id="support-wa" href="#" hidden target="_blank" rel="noopener noreferrer">WhatsApp</a>
+      </div>
+    </section>
+  </main>
+  <footer class="footer">
+    <div class="footer-brand"><img src="assets/mark.png" alt="" width="34" height="23"><span>Modefx</span></div>
+    <p>Modefx provides simulated trading and educational content only. It is not a broker, does not hold client funds and does not provide investment advice. Trading real markets involves significant risk of loss.</p>
+    <p class="fine">&copy; <span id="year"></span> Modefx</p>
+  </footer>
+  <nav class="tabbar" aria-label="Main"><a href="index.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Home</span></a><a href="markets.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l5-5 4 4 8-9"/><path d="M15 7h5v5"/></svg><span>Markets</span></a><a href="plans.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><path d="M9 6v12" stroke-dasharray="2 3"/></svg><span>Plans</span></a><a href="help.html" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/><path d="M12 17h.01"/></svg><span>Help</span></a><a href="account.html"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg><span>Account</span></a></nav>
+  <script src="config.js"></script>
+  <script src="app.js" defer></script>
+</body>
+</html>

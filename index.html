@@ -15,9 +15,10 @@
   <link rel="stylesheet" href="styles.css">
   <noscript><style>#intro{display:none!important}body.intro-lock{overflow:auto!important}</style></noscript>
 </head>
-<body class="intro-lock">
-
-  <!-- Intro: plays once per browser session, before the landing page -->
+<body class="intro-lock" data-page="home">
+  <div class="bgvid" aria-hidden="true">
+    <video autoplay muted loop playsinline preload="auto" poster="assets/bg-poster.jpg"><source src="assets/bg.mp4" type="video/mp4"><source src="assets/bg.webm" type="video/webm"></video>
+  </div>
   <div id="intro" role="dialog" aria-label="Modefx intro" aria-modal="true">
     <div class="intro-stage">
       <video muted playsinline preload="auto"><source src="assets/intro.mp4" type="video/mp4"><source src="assets/intro.webm" type="video/webm"></video>
@@ -27,103 +28,32 @@
       <button type="button" id="intro-skip" data-quiet>Skip intro</button>
     </div>
   </div>
-
-  <!-- Loader: plays after any button click -->
   <div id="loader" aria-hidden="true" role="status" aria-label="Loading">
     <video muted playsinline preload="auto"><source src="assets/loader.mp4" type="video/mp4"><source src="assets/loader.webm" type="video/webm"></video>
   </div>
-
   <header class="nav">
-    <a class="brand" href="#top" aria-label="Modefx home">
+    <a class="brand" href="index.html" aria-label="Modefx home">
       <img src="assets/mark.png" alt="" width="34" height="23">
       <span>Modefx</span>
     </a>
-    <nav aria-label="Main">
-      <a href="#markets">Markets</a>
-      <a href="#plans">Plans</a>
-      <a href="#faq">FAQ</a>
-      <a href="#support" id="nav-support" hidden>Support</a>
-    </nav>
-    <button type="button" class="btn btn-ghost" id="nav-signin" data-goto-auth>Sign in</button>
+    <nav aria-label="Main"><a href="index.html" aria-current="page">Home</a><a href="markets.html">Markets</a><a href="plans.html">Plans</a><a href="help.html">Help</a></nav>
+    <a class="btn btn-ghost" id="nav-account" href="account.html">Sign in</a>
   </header>
-
-  <main id="top">
-    <!-- HERO -->
+  <main class="page" id="top">
     <section class="hero">
-      <div class="hero-copy">
-        <div class="logo-wrap">
-          <img class="hero-logo" src="assets/logo.png" width="1033" height="701" alt="Modefx. Trade smarter. Move forward.">
-        </div>
-        <h1>Practice trading with virtual money before you risk real money.</h1>
-        <p class="lead">A simulated trading account, a journal that shows your habits, and short lessons in plain English. Every trade you place on Modefx is simulated.</p>
-        <div class="cta-row">
-          <button type="button" class="btn btn-primary" data-goto-auth>Start practicing</button>
-          <a class="btn btn-ghost" href="#markets">Explore markets</a>
-          <a class="btn btn-ghost" href="#plans">View plans</a>
-        </div>
-        <p class="fine">Modefx is an education and practice tool. It does not give financial advice and cannot promise profits.</p>
+      <div class="logo-wrap">
+        <img class="hero-logo" src="assets/logo.png" width="1033" height="701" alt="Modefx. Trade smarter. Move forward.">
       </div>
-
-      <div class="auth" id="auth" aria-live="polite">
-        <div id="auth-forms">
-          <div class="tabs" role="tablist" aria-label="Account">
-            <button type="button" role="tab" id="tab-signin" aria-selected="true" aria-controls="auth-form" data-quiet>Sign in</button>
-            <button type="button" role="tab" id="tab-signup" aria-selected="false" aria-controls="auth-form" data-quiet>Create account</button>
-          </div>
-
-          <form id="auth-form" novalidate>
-            <label for="email">Email</label>
-            <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>
-
-            <label for="password">Password</label>
-            <div class="pw">
-              <input id="password" name="password" type="password" autocomplete="current-password" minlength="8" placeholder="At least 8 characters" required>
-              <button type="button" id="pw-toggle" class="pw-toggle" aria-label="Show password" data-quiet>Show</button>
-            </div>
-
-            <label class="check" id="consent-row" hidden>
-              <input type="checkbox" id="consent">
-              <span>I understand Modefx is simulated practice and not financial advice.</span>
-            </label>
-
-            <p class="msg" id="auth-msg" role="alert"></p>
-
-            <button type="submit" class="btn btn-primary btn-block" id="auth-submit" data-async>Sign in</button>
-            <button type="button" class="link" id="forgot" data-async>Forgot password?</button>
-
-            <div class="or"><span>or</span></div>
-
-            <button type="button" class="btn btn-google btn-block" id="google" data-async>
-              <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
-              Continue with Google
-            </button>
-          </form>
-        </div>
-
-        <!-- Shown after the reset-password email link is opened -->
-        <form id="recovery-form" hidden novalidate>
-          <h2 class="auth-title">Set a new password</h2>
-          <label for="new-password">New password</label>
-          <input id="new-password" type="password" autocomplete="new-password" minlength="8" placeholder="At least 8 characters" required>
-          <p class="msg" id="recovery-msg" role="alert"></p>
-          <button type="submit" class="btn btn-primary btn-block" data-async>Save password</button>
-        </form>
-
-        <!-- Shown when signed in -->
-        <div id="account" hidden>
-          <h2 class="auth-title">You're signed in</h2>
-          <p class="acct-email" id="acct-email"></p>
-          <dl class="acct-plan">
-            <dt>Plan</dt><dd id="acct-plan">No active plan</dd>
-          </dl>
-          <a class="btn btn-primary btn-block" href="#plans">Choose a plan</a>
-          <button type="button" class="btn btn-ghost btn-block" id="signout" data-async>Sign out</button>
-        </div>
+      <h1>Practice trading with virtual money before you risk real money.</h1>
+      <p class="lead">A simulated trading account, a journal that shows your habits, and short lessons in plain English. Every trade you place on Modefx is simulated.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="account.html?mode=signup">Start practicing</a>
+        <a class="btn btn-ghost" href="plans.html">View plans</a>
       </div>
+      <p class="fine">Modefx is an education and practice tool. It does not give financial advice and cannot promise profits.</p>
     </section>
 
-    <!-- WHAT IT IS -->
-    <section class="section">
+    <section class="sheet">
       <h2>What you get on Modefx</h2>
       <div class="trio">
         <div>
@@ -141,93 +71,21 @@
       </div>
     </section>
 
-    <!-- MARKETS -->
-    <section class="section" id="markets">
-      <div class="section-head">
-        <h2>Markets you can practice on</h2>
-        <span class="pill">Demo data</span>
-      </div>
-      <p class="section-sub">Forex, crypto, stocks and indices. The prices below are sample values to show the layout. They are not live quotes.</p>
-      <ul class="markets" id="market-list"></ul>
-    </section>
-
-    <!-- PLANS -->
-    <section class="section" id="plans">
-      <h2>Plans</h2>
-      <p class="section-sub">Pay with M-Pesa. Prices are in Kenyan shillings and each plan runs for a fixed number of days. No auto-renewal. A plan gives you access to tools and lessons. It does not make trading profitable.</p>
-      <div class="plans" id="plan-list"></div>
-      <p class="fine">Features are being released in phases. Your account shows what is available today.</p>
-    </section>
-
-    <!-- REAL MONEY -->
-    <section class="section notice" id="real-money">
-      <h2>Ready to trade real money?</h2>
-      <p>Modefx is not a broker. It does not hold your money, take deposits or place real trades. If you decide to trade with real money, you would do that on <span data-broker-name>Deriv</span>, a separate company with its own terms, fees and risks.</p>
-      <p><strong>Trading leveraged products such as forex and CFDs carries a high risk of losing money quickly.</strong> Only risk money you can afford to lose, and check that the broker's services are available and permitted where you live.</p>
-      <a class="btn btn-ghost" id="broker-link" href="https://deriv.com" target="_blank" rel="noopener noreferrer">Go to <span data-broker-name>Deriv</span> (opens a new site)</a>
-    </section>
-
-    <!-- FAQ -->
-    <section class="section" id="faq">
-      <h2>Questions</h2>
-      <div class="faq">
-        <details>
-          <summary>Is my money at risk on Modefx?</summary>
-          <p>No. Trades on Modefx use a virtual balance. The only real money you spend here is the plan price you choose to pay.</p>
-        </details>
-        <details>
-          <summary>Will I make money if I subscribe?</summary>
-          <p>No one can promise that, and we don't. Plans give you practice tools, analytics and lessons. Results in real markets depend on many things outside this site, and most people who trade leveraged products lose money.</p>
-        </details>
-        <details>
-          <summary>How do I pay?</summary>
-          <p>Choose a plan, enter your M-Pesa number, and approve the prompt on your phone with your PIN. Your plan activates once payment is confirmed. Modefx never sees your PIN.</p>
-        </details>
-        <details>
-          <summary>I paid but my plan didn't activate.</summary>
-          <p>Confirmation can take a minute or two. If it still hasn't activated, contact support with your M-Pesa confirmation message and we'll fix it.</p>
-        </details>
-        <details>
-          <summary>Are the prices on the site live?</summary>
-          <p>Prices marked demo are samples. When live or delayed market data is added, it will be labelled with its source, and AI-written commentary will be labelled separately from verified data.</p>
-        </details>
-      </div>
-    </section>
-
-    <!-- SUPPORT (hidden until contacts are set in config.js) -->
-    <section class="section" id="support" hidden>
-      <h2>Support</h2>
-      <p class="section-sub">Payment problem or a question about your account? Reach us here.</p>
-      <div class="cta-row">
-        <a class="btn btn-ghost" id="support-email" href="#" hidden>Email support</a>
-        <a class="btn btn-ghost" id="support-wa" href="#" hidden target="_blank" rel="noopener noreferrer">WhatsApp</a>
+    <section class="sheet">
+      <h2>Where to next</h2>
+      <div class="rows">
+        <a class="row" href="markets.html"><strong>Markets</strong><span>See the forex, crypto, stock and index markets you can practice on.</span></a>
+        <a class="row" href="plans.html"><strong>Plans</strong><span>Five plans from KSh 99. Pay with M-Pesa.</span></a>
+        <a class="row" href="help.html"><strong>Help</strong><span>Answers about payments, simulated trading and support.</span></a>
       </div>
     </section>
   </main>
-
   <footer class="footer">
-    <div class="footer-brand">
-      <img src="assets/mark.png" alt="" width="34" height="23">
-      <span>Modefx</span>
-    </div>
+    <div class="footer-brand"><img src="assets/mark.png" alt="" width="34" height="23"><span>Modefx</span></div>
     <p>Modefx provides simulated trading and educational content only. It is not a broker, does not hold client funds and does not provide investment advice. Trading real markets involves significant risk of loss.</p>
     <p class="fine">&copy; <span id="year"></span> Modefx</p>
   </footer>
-
-  <!-- CHECKOUT -->
-  <dialog id="checkout" aria-labelledby="co-title">
-    <form method="dialog" class="co-close"><button type="submit" aria-label="Close" data-quiet>&times;</button></form>
-    <h2 id="co-title">Pay with M-Pesa</h2>
-    <p class="co-summary" id="co-summary"></p>
-    <form id="co-form" novalidate>
-      <label for="co-phone">M-Pesa phone number</label>
-      <input id="co-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="07XX XXX XXX" required>
-      <p class="fine">You'll get a prompt on this phone. Enter your M-Pesa PIN there to pay.</p>
-      <p class="msg" id="co-msg" role="alert"></p>
-      <button type="submit" class="btn btn-primary btn-block" id="co-pay" data-async>Send payment prompt</button>
-    </form>
-  </dialog>
-
+  <nav class="tabbar" aria-label="Main"><a href="index.html" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Home</span></a><a href="markets.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l5-5 4 4 8-9"/><path d="M15 7h5v5"/></svg><span>Markets</span></a><a href="plans.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><path d="M9 6v12" stroke-dasharray="2 3"/></svg><span>Plans</span></a><a href="help.html"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/><path d="M12 17h.01"/></svg><span>Help</span></a><a href="account.html"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg><span>Account</span></a></nav>
   <script src="config.js"></script>
   <script src="app.js" defer></script>
 </body>

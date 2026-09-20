@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Plans | Modefx</title>
+  <meta name="description" content="Modefx plans from KSh 99. Pay with M-Pesa. No auto-renewal. No profit guarantees.">
+  <meta name="theme-color" content="#03060F">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png">
+  <link rel="apple-touch-icon" href="assets/icon-180.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="plans">
+  <div class="bgvid" aria-hidden="true">
+    <video autoplay muted loop playsinline preload="auto" poster="assets/bg-poster.jpg"><source src="assets/bg.mp4" type="video/mp4"><source src="assets/bg.webm" type="video/webm"></video>
+  </div>
+  <div id="loader" aria-hidden="true" role="status" aria-label="Loading">
+    <video muted playsinline preload="auto"><source src="assets/loader.mp4" type="video/mp4"><source src="assets/loader.webm" type="video/webm"></video>
+  </div>
+  <header class="nav">
+    <a class="brand" href="index.html" aria-label="Modefx home">
+      <img src="assets/mark.png" alt="" width="34" height="23">
+      <span>Modefx</span>
+    </a>
+    <nav aria-label="Main"><a href="index.html">Home</a><a href="markets.html">Markets</a><a href="plans.html" aria-current="page">Plans</a><a href="help.html">Help</a></nav>
+    <a class="btn btn-ghost" id="nav-account" href="account.html">Sign in</a>
+  </header>
+  <main class="page">
+    <div class="page-head">
+      <h1>Plans</h1>
+      <p>Pay with M-Pesa. Prices are in Kenyan shillings and each plan runs for a fixed number of days. No auto-renewal. A plan gives you access to tools and lessons. It does not make trading profitable.</p>
+    </div>
+    <section class="sheet">
+      <div class="plans" id="plan-list"></div>
+    </section>
+    <p class="fine">Features are being released in phases. Your account shows what is available today.</p>
+  </main>
+  <footer class="footer">
+    <div class="footer-brand"><img src="assets/mark.png" alt="" width="34" height="23"><span>Modefx</span></div>
+    <p>Modefx provides simulated trading and educational content only. It is not a broker, does not hold client funds and does not provide investment advice. Trading real markets involves significant risk of loss.</p>
+    <p class="fine">&copy; <span id="year"></span> Modefx</p>
+  </footer>
+  <dialog id="checkout" aria-labelledby="co-title">
+    <form method="dialog" class="co-close"><button type="submit" aria-label="Close" data-quiet>&times;</button></form>
+    <h2 id="co-title">Pay with M-Pesa</h2>
+    <p class="co-summary" id="co-summary"></p>
+    <form id="co-form" novalidate>
+      <label for="co-phone">M-Pesa phone number</label>
+      <input id="co-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="07XX XXX XXX" required>
+      <p class="fine">You'll get a prompt on this phone. Enter your M-Pesa PIN there to pay.</p>
+      <p class="msg" id="co-msg" role="alert"></p>
+      <button type="submit" class="btn btn-primary btn-block" id="co-pay" data-async>Send payment prompt</button>
+    </form>
+  </dialog>
+  <nav class="tabbar" aria-label="Main"><a href="index.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Home</span></a><a href="markets.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l5-5 4 4 8-9"/><path d="M15 7h5v5"/></svg><span>Markets</span></a><a href="plans.html" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><path d="M9 6v12" stroke-dasharray="2 3"/></svg><span>Plans</span></a><a href="help.html"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/><path d="M12 17h.01"/></svg><span>Help</span></a><a href="account.html"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg><span>Account</span></a></nav>
+  <script src="config.js"></script>
+  <script src="app.js" defer></script>
+</body>
+</html>
