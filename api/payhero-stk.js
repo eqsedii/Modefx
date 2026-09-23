@@ -6,6 +6,13 @@ import { TIERS } from "./_plans.js";
 // Creates a pending payment row, then asks PayHero to send an M-Pesa STK prompt.
 // A tier is only activated later, by the webhook, after PayHero reports success.
 export default async function handler(req, res) {
+  // The site (GitHub Pages) and this API (Vercel) live on different addresses, so the
+  // browser needs explicit permission (CORS) to call this endpoint from the page.
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  if (req.method === "OPTIONS") return res.status(204).end();
+
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   const token = (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
