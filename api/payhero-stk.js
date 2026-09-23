@@ -1,10 +1,10 @@
 import crypto from "node:crypto";
 import { admin } from "./_db.js";
-import { PLANS } from "./_plans.js";
+import { TIERS } from "./_plans.js";
 
-// POST /api/payhero-stk  { planId, phone }   Authorization: Bearer <supabase access token>
+// POST /api/payhero-stk  { tier, phone }   Authorization: Bearer <supabase access token>
 // Creates a pending payment row, then asks PayHero to send an M-Pesa STK prompt.
-// The plan is only activated later, by the webhook, after PayHero reports success.
+// A tier is only activated later, by the webhook, after PayHero reports success.
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
@@ -14,12 +14,21 @@ export default async function handler(req, res) {
   if (authErr || !auth?.user) return res.status(401).json({ error: "Your session has expired. Sign in again." });
   const user = auth.user;
 
-  const { planId, phone } = req.body || {};
-  const plan = PLANS[planId];
-  if (!plan) return res.status(400).json({ error: "Unknown plan." });
+  const { tier: tierId, phone } = req.body || {};
+  const tier = TIERS[tierId];
+  if (!tier) return res.status(400).json({ error: "Unknown plan." });
   const m = String(phone || "").replace(/[\s()-]/g, "").match(/^(?:\+?254|0)([71]\d{8})$/);
   if (!m) return res.status(400).json({ error: "Enter a valid Safaricom number." });
   const msisdn = "0" + m[1];
+
+  // Enforce the ladder: a tier can only be bought once its prerequisite has been paid,
+  // and a tier the user already owns can't be bought again.
+  const { data: owned } = await admin.from("entitlements").select("tier").eq("user_id", user.id);
+  const ownedTiers = new Set((owned || []).map((r) => r.tier));
+  if (ownedTiers.has(tierId)) return res.status(400).json({ error: `You already have ${tier.name}.` });
+  if (tier.requires && !ownedTiers.has(tier.requires)) {
+    return res.status(400).json({ error: `Get ${TIERS[tier.requires].name} first, then ${tier.name} unlocks.` });
+  }
 
   // Basic abuse guard: no more than 3 pending prompts in 2 minutes per user.
   const since = new Date(Date.now() - 2 * 60 * 1000).toISOString();
@@ -29,7 +38,7 @@ export default async function handler(req, res) {
 
   const reference = "MFX-" + crypto.randomBytes(8).toString("hex").toUpperCase();
   const { error: insErr } = await admin.from("payments").insert({
-    user_id: user.id, plan_id: planId, amount: plan.amount,
+    user_id: user.id, plan_id: tierId, amount: tier.amount,
     external_reference: reference, status: "pending", phone_last4: msisdn.slice(-4)
   });
   if (insErr) return res.status(500).json({ error: "Couldn't start the payment. Try again." });
@@ -42,7 +51,7 @@ export default async function handler(req, res) {
         Authorization: `Basic ${process.env.PAYHERO_BASIC_AUTH}`
       },
       body: JSON.stringify({
-        amount: plan.amount,
+        amount: tier.amount,
         phone_number: msisdn,
         channel_id: Number(process.env.PAYHERO_CHANNEL_ID),
         provider: "m-pesa",
