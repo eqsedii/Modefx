@@ -1,12 +1,12 @@
 /* Public, client-side settings. Never put secret keys in this file.
    The Supabase anon key is designed to be public; access is enforced by RLS in supabase/schema.sql. */
 window.MODEFX_CONFIG = {
-  supabaseUrl: "",       // e.g. https://abcd1234.supabase.co
-  supabaseAnonKey: "",   // Project Settings > API > anon public key
-  apiBase: "",           // "" = same origin (Vercel). Set a full URL if the API lives elsewhere.
+  supabaseUrl: "https://qkloaanflkepvucycgrf.supabase.co",       // e.g. https://abcd1234.supabase.co
+  supabaseAnonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFrbG9hYW5mbGtlcHZ1Y3ljZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxMjM4OTYsImV4cCI6MjEwNTY5OTg5Nn0.-yOY5PNX50tucnck-UkSEGrXYdh94k7kwg2VGmuwKno",   // Project Settings > API > anon public key
+  apiBase: "https://modefx.vercel.app",           // "" = same origin (Vercel). Set a full URL if the API lives elsewhere.
 
   // Shown in the Help section. Leave both empty to hide the section.
-  supportEmail: "",
+  supportEmail: "modefx.ke@gmail.com",
   supportWhatsApp: "",   // international format, digits only, e.g. 2547XXXXXXXX
 
   // Real-money trading is done on a separate, licensed broker. Modefx only links out.
