@@ -43,12 +43,16 @@ export default async function handler(req, res) {
   });
   if (insErr) return res.status(500).json({ error: "Couldn't start the payment. Try again." });
 
+  // PAYHERO_BASIC_AUTH may be stored with or without a leading "Basic " — handle both.
+  const rawAuth = String(process.env.PAYHERO_BASIC_AUTH || "");
+  const authHeader = /^basic\s/i.test(rawAuth) ? rawAuth : `Basic ${rawAuth}`;
+
   try {
     const r = await fetch("https://backend.payhero.co.ke/api/v2/payments", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Basic ${process.env.PAYHERO_BASIC_AUTH}`
+        Authorization: authHeader
       },
       body: JSON.stringify({
         amount: tier.amount,
