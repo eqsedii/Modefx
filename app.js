@@ -132,28 +132,73 @@
     }).join("");
   }
 
-  /* ---------------- Plans ---------------- */
+  /* ---------------- Tier ladder: shared state ---------------- */
+  // myEntitlements: array of { tier, expires_at } for the signed-in user, refreshed after login and after a payment.
+  let myEntitlements = null; // null = not loaded yet (signed out, or still loading)
+
+  const isUnlocked = (tierId) => {
+    const e = (myEntitlements || []).find((x) => x.tier === tierId);
+    if (!e) return false;
+    return !e.expires_at || new Date(e.expires_at) > new Date();
+  };
+  const wasEverBought = (tierId) => (myEntitlements || []).some((x) => x.tier === tierId);
+  const daysLeft = (iso) => Math.max(0, Math.ceil((new Date(iso) - new Date()) / 86400000));
+
+  async function loadEntitlements() {
+    try {
+      const { data } = await sb.from("entitlements").select("tier, expires_at");
+      myEntitlements = data || [];
+    } catch (_) { myEntitlements = []; }
+  }
+
+  /* ---------------- Plans (the tier ladder) ---------------- */
   const planList = $("#plan-list");
-  if (planList) {
-    (C.plans || []).forEach((p) => {
+  function renderTiers() {
+    if (!planList) return;
+    planList.innerHTML = "";
+    (C.tiers || []).forEach((t) => {
+      const unlocked = isUnlocked(t.id);
+      const everBought = wasEverBought(t.id);
+      const prereqDone = !t.requires || wasEverBought(t.requires);
+      const starterEnt = t.id === "starter" ? (myEntitlements || []).find((x) => x.tier === "starter") : null;
+
       const art = document.createElement("article");
       art.className = "plan";
+      let statusLine = "";
+      let btnLabel = `Get ${t.name}`;
+      let btnDisabled = false;
+
+      if (unlocked) {
+        btnLabel = "Unlocked"; btnDisabled = true;
+        statusLine = t.id === "starter" && starterEnt && starterEnt.expires_at
+          ? `<p class="fine">Unlocked — locks in ${daysLeft(starterEnt.expires_at)} day(s) unless you get Growth.</p>`
+          : `<p class="fine">Unlocked, forever.</p>`;
+      } else if (everBought) {
+        // starter, bought before, now expired
+        btnLabel = `Get ${t.name} again — unlocks forever`;
+      } else if (!prereqDone) {
+        const reqName = (C.tiers.find((x) => x.id === t.requires) || {}).name || t.requires;
+        btnDisabled = true; btnLabel = `Locked — get ${reqName} first`;
+      }
+
       art.innerHTML = `
         <div class="plan-head"><div class="plan-name"></div><p></p></div>
         <ul></ul>
         <div class="plan-buy">
           <div class="price"><span class="amt"></span><small class="dur"></small></div>
-          <button type="button" class="btn btn-primary" data-plan="${p.id}"></button>
+          <button type="button" class="btn btn-primary" data-tier="${t.id}" ${btnDisabled ? "disabled" : ""}></button>
+          ${statusLine}
         </div>`;
-      $(".plan-name", art).textContent = p.name;
-      $(".plan-head p", art).textContent = p.line;
-      p.features.forEach((f) => { const li = document.createElement("li"); li.textContent = f; $("ul", art).append(li); });
-      $(".amt", art).textContent = fmtKES(p.price);
-      $(".dur", art).textContent = `for ${p.days} days`;
-      $(".btn", art).textContent = `Get ${p.name}`;
+      $(".plan-name", art).textContent = t.name;
+      $(".plan-head p", art).textContent = t.line;
+      t.features.forEach((f) => { const li = document.createElement("li"); li.textContent = f; $("ul", art).append(li); });
+      $(".amt", art).textContent = fmtKES(t.price);
+      $(".dur", art).textContent = t.id === "starter" ? "unlocks now" : "one time";
+      $(".btn", art).textContent = btnLabel;
       planList.append(art);
     });
   }
+  renderTiers(); // render once immediately (all locked/unknown) so the page isn't empty while we sign in
 
   /* ---------------- Auth (Supabase) ---------------- */
   let sb = null, session = null, mode = "signin";
@@ -179,22 +224,27 @@
   const navAccount = $("#nav-account");
   const authForm = $("#auth-form");   // only on account.html
 
-  async function planStatus() {
-    try {
-      const { data } = await sb.from("subscriptions").select("plan_id, ends_at")
-        .gt("ends_at", new Date().toISOString()).order("ends_at", { ascending: false }).limit(1);
-      if (data && data[0]) {
-        const p = (C.plans || []).find((x) => x.id === data[0].plan_id);
-        const d = new Date(data[0].ends_at).toLocaleDateString("en-KE", { day: "numeric", month: "short", year: "numeric" });
-        return `${p ? p.name : data[0].plan_id}, until ${d}`;
-      }
-    } catch (_) {}
-    return "No active plan";
+  function ladderSummary() {
+    const order = (C.tiers || []).map((t) => t.id);
+    const highest = [...order].reverse().find((id) => isUnlocked(id));
+    if (!highest) {
+      const starter = (myEntitlements || []).find((x) => x.tier === "starter");
+      return starter ? "Starter locked — get Growth to unlock again" : "No plan yet";
+    }
+    const name = (C.tiers.find((t) => t.id === highest) || {}).name || highest;
+    return `${name} unlocked`;
   }
 
   async function render(s) {
     session = s;
     if (navAccount) navAccount.textContent = s ? "Account" : "Sign in";
+    if (s) {
+      await loadEntitlements();
+      renderTiers();
+    } else {
+      myEntitlements = null;
+      renderTiers();
+    }
     if (!authForm) return;
     const recovering = !$("#recovery-form").hidden;
     $("#auth-forms").hidden = !!s || recovering;
@@ -204,7 +254,7 @@
       let next = null;
       try { next = sessionStorage.getItem("mfx-next"); sessionStorage.removeItem("mfx-next"); } catch (_) {}
       if (next && !recovering) { location.href = next; return; }
-      $("#acct-plan").textContent = await planStatus();
+      $("#acct-plan").textContent = ladderSummary();
     }
   }
 
@@ -314,8 +364,8 @@
     let chosen = null, pollTimer = null;
 
     planList.addEventListener("click", (e) => {
-      const b = e.target.closest("[data-plan]"); if (!b) return;
-      chosen = (C.plans || []).find((p) => p.id === b.dataset.plan);
+      const b = e.target.closest("[data-tier]"); if (!b || b.disabled) return;
+      chosen = (C.tiers || []).find((t) => t.id === b.dataset.tier);
       if (!session) {
         try {
           sessionStorage.setItem("mfx-next", "plans.html");
@@ -324,7 +374,7 @@
         setTimeout(() => { location.href = "account.html?mode=signup"; }, 900);
         return;
       }
-      $("#co-summary").textContent = `${chosen.name}: ${fmtKES(chosen.price)} for ${chosen.days} days`;
+      $("#co-summary").textContent = `${chosen.name}: ${fmtKES(chosen.price)}, one time`;
       coPay.disabled = false; coPay.onclick = null; coPay.textContent = "Send payment prompt"; msg(coMsg, "");
       dlg.showModal();
     });
@@ -345,7 +395,7 @@
         const res = await Loader.run(fetch((C.apiBase || "") + "/api/payhero-stk", {
           method: "POST",
           headers: { "Content-Type": "application/json", Authorization: "Bearer " + session.access_token },
-          body: JSON.stringify({ planId: chosen.id, phone })
+          body: JSON.stringify({ tier: chosen.id, phone })
         }));
         const body = await res.json().catch(() => ({}));
         if (!res.ok) { msg(coMsg, body.error || "We couldn't start the payment. Try again."); coPay.disabled = false; return; }
@@ -363,9 +413,9 @@
         if (!dlg.open) return;
         const { data } = await sb.from("payments").select("status, failure_reason").eq("external_reference", ref).maybeSingle();
         if (data && data.status === "success") {
-          msg(coMsg, "Payment received. Your plan is now active.", "ok");
+          msg(coMsg, "Payment received. It's unlocked.", "ok");
           coPay.textContent = "Done"; coPay.disabled = false;
-          coPay.onclick = (ev) => { ev.preventDefault(); dlg.close(); coPay.onclick = null; coPay.textContent = "Send payment prompt"; };
+          coPay.onclick = async (ev) => { ev.preventDefault(); dlg.close(); coPay.onclick = null; coPay.textContent = "Send payment prompt"; await loadEntitlements(); renderTiers(); if ($("#acct-plan")) $("#acct-plan").textContent = ladderSummary(); };
           return;
         }
         if (data && data.status === "failed") {
@@ -373,7 +423,7 @@
           coPay.disabled = false; coPay.textContent = "Send payment prompt"; return;
         }
         if (Date.now() - started > 120000) {
-          msg(coMsg, "We haven't received confirmation yet. If M-Pesa charged you, your plan will activate automatically. If it doesn't, contact support with your M-Pesa message.");
+          msg(coMsg, "We haven't received confirmation yet. If M-Pesa charged you, it will unlock automatically. If it doesn't, contact support with your M-Pesa message.");
           coPay.disabled = false; coPay.textContent = "Send payment prompt"; return;
         }
         poll(ref, started);

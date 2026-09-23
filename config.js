@@ -5,7 +5,7 @@ window.MODEFX_CONFIG = {
   supabaseAnonKey: "",   // Project Settings > API > anon public key
   apiBase: "",           // "" = same origin (Vercel). Set a full URL if the API lives elsewhere.
 
-  // Shown in the Support section. Leave both empty to hide the section.
+  // Shown in the Help section. Leave both empty to hide the section.
   supportEmail: "",
   supportWhatsApp: "",   // international format, digits only, e.g. 2547XXXXXXXX
 
@@ -13,60 +13,50 @@ window.MODEFX_CONFIG = {
   brokerName: "Deriv",
   brokerUrl: "https://deriv.com",
 
-  // Display copy only. Amounts and durations are enforced on the server in api/_plans.js.
-  // Keep the two files in sync.
-  plans: [
+  // Display copy only. Amounts and the unlock order are enforced on the server in api/_plans.js.
+  // Keep the tier ids ("id") and prices in sync with that file.
+  // Each tier requires the one before it: growth needs starter, pro needs growth, golden needs pro.
+  tiers: [
     {
-      id: "spark", name: "Spark", price: 99, days: 7,
-      line: "A week of guided practice to see if Modefx fits you.",
+      id: "starter", name: "Starter", price: 99,
+      line: "Your first step. Unlocks for 7 days, then locks until you get Growth.",
       features: [
+        "Simulated trading account with a virtual balance",
+        "Basic trade journal, up to 20 entries",
         "Daily plain-language market summary",
-        "Paper trading account with virtual balance",
-        "Trade journal, up to 20 entries",
         "5 starter lessons"
       ]
     },
     {
-      id: "pulse", name: "Pulse", price: 199, days: 14,
-      line: "Two weeks to build a routine with lessons and challenges.",
+      id: "growth", name: "Growth", price: 599, requires: "starter",
+      line: "Unlocks live market status and makes Starter permanent.",
       features: [
-        "Everything in Spark",
-        "Lesson library, levels 1 and 2",
-        "Stop-loss, take-profit and position-size calculator",
-        "Weekly practice challenges",
-        "Trade journal, up to 100 entries"
+        "Everything in Starter, unlocked forever",
+        "Live market status and prices",
+        "Full trade journal with analytics (win rate, drawdown, risk)",
+        "Practice challenges and XP",
+        "Full lesson library"
       ]
     },
     {
-      id: "drive", name: "Drive", price: 299, days: 30,
-      line: "A month of full practice with real performance analytics.",
+      id: "pro", name: "Pro", price: 2999, requires: "growth",
+      line: "For traders who want deeper tools and the community.",
       features: [
-        "Everything in Pulse",
-        "Analytics: win rate, drawdown, risk per trade",
-        "Unlimited journal entries with screenshots",
-        "Paper trading across forex, crypto, stocks and indices",
-        "Post and comment in the community"
-      ]
-    },
-    {
-      id: "apex", name: "Apex", price: 599, days: 30,
-      line: "Explanations and reviews that help you understand your own trades.",
-      features: [
-        "Everything in Drive",
-        "AI market explainers and journal review (monthly fair-use limit)",
+        "Everything in Growth, unlocked forever",
+        "AI market explainers and journal review",
         "Economic calendar with plain-language notes",
-        "Advanced courses"
+        "Post and comment in the community",
+        "Strategy documentation tools"
       ]
     },
     {
-      id: "zenith", name: "Zenith", price: 999, days: 30,
-      line: "Everything Modefx offers, with the highest limits.",
+      id: "golden", name: "Golden", price: 5999, requires: "pro",
+      line: "The full platform, including a link to your Deriv account.",
       features: [
-        "Everything in Apex",
-        "Full course library",
-        "Highest AI usage limits",
-        "Strategy documentation tools",
-        "Early access to new tools"
+        "Everything in Pro, unlocked forever",
+        "Link your Deriv account",
+        "AI market predictions (educational, not guaranteed)",
+        "Highest usage limits"
       ]
     }
   ]
