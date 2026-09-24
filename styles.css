@@ -229,3 +229,13 @@ dialog .fine { margin-top: .5rem; }
 /* Legibility over the moving background */
 .hero h1, .hero .lead, .hero .fine, .page-head h1, .page-head p { text-shadow: 0 1px 14px rgba(3, 6, 15, .95), 0 0 2px rgba(3, 6, 15, .6); }
 #broker-link { display: inline-block; text-align: center; }
+
+/* ---------- Admin ---------- */
+.table-scroll { overflow-x: auto; }
+.admin-table { width: 100%; border-collapse: collapse; font-size: .88rem; white-space: nowrap; }
+.admin-table th { text-align: left; color: var(--mute); font-weight: 600; padding: 0 .9rem .6rem 0; border-bottom: 1px solid var(--line); }
+.admin-table td { padding: .7rem .9rem .7rem 0; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.admin-table td.ok { color: var(--ok); } .admin-table td.err { color: var(--err); } .admin-table td.info { color: var(--mute); }
+.confirm-form { display: flex; gap: .5rem; align-items: center; }
+.confirm-form .receipt { font: 400 .85rem var(--body); color: var(--silver); background: rgba(3, 6, 15, .75); border: 1px solid var(--line); border-radius: 8px; padding: .5rem .6rem; width: 160px; }
+.confirm-form .btn { padding: .5rem .8rem; font-size: .85rem; white-space: nowrap; }

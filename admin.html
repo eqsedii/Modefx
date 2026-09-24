@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Admin | Modefx</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#03060F">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="admin">
+  <header class="nav">
+    <a class="brand" href="index.html" aria-label="Modefx home">
+      <img src="assets/mark.png" alt="" width="34" height="23">
+      <span>Modefx Admin</span>
+    </a>
+    <button type="button" class="btn btn-ghost" id="admin-signout" data-async style="margin-left:auto" hidden>Sign out</button>
+  </header>
+
+  <main class="page">
+    <div class="page-head">
+      <h1>Payments</h1>
+      <p>Signed in as <strong id="admin-email">—</strong>. If a real M-Pesa payment went through but the site didn't unlock it, find the matching row below by phone (last 4 digits), amount and time, then confirm it — this unlocks the tier immediately.</p>
+    </div>
+
+    <section class="sheet">
+      <p class="fine" id="admin-status">Loading…</p>
+      <div class="table-scroll">
+        <table class="admin-table">
+          <thead>
+            <tr><th>When</th><th>User</th><th>Tier</th><th>Amount</th><th>Phone</th><th>Status</th><th>Action</th></tr>
+          </thead>
+          <tbody id="payment-list"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="admin.js" defer></script>
+</body>
+</html>
