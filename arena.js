@@ -20,7 +20,84 @@
     { sym: "US100", nm: "Nasdaq 100 index", cls: "Index", base: 18410, amp: 0.01, period: 100000, phase: 1.7, dp: 0 }
   ];
   const priceOf = (s) => s.base * (1 + s.amp * Math.sin((2 * Math.PI * Date.now()) / s.period + s.phase));
+  const priceAt = (s, t) => s.base * (1 + s.amp * Math.sin((2 * Math.PI * t) / s.period + s.phase));
   const fmtPrice = (s, p) => p.toLocaleString("en-KE", { minimumFractionDigits: s.dp, maximumFractionDigits: s.dp });
+
+  // A small seeded random generator so the candle wicks look natural but are identical
+  // for everyone looking at the same moment — this is a practice sandbox, not live data.
+  function seededRandom(str) {
+    let h = 1779033703 ^ str.length;
+    for (let i = 0; i < str.length; i++) { h = Math.imul(h ^ str.charCodeAt(i), 3432918353); h = (h << 13) | (h >>> 19); }
+    return () => {
+      h = Math.imul(h ^ (h >>> 16), 2246822519); h = Math.imul(h ^ (h >>> 13), 3266489917); h ^= h >>> 16;
+      return (h >>> 0) / 4294967296;
+    };
+  }
+  const CANDLE_MS = 60000, CANDLE_COUNT = 60;
+  function candlesFor(s) {
+    const bucketNow = Math.floor(Date.now() / CANDLE_MS) * CANDLE_MS;
+    const bars = []; let prevClose = null;
+    for (let i = CANDLE_COUNT - 1; i >= 0; i--) {
+      const t = bucketNow - i * CANDLE_MS;
+      const rnd = seededRandom(s.sym + ":" + t);
+      const close = priceAt(s, t);
+      const open = prevClose == null ? close * (1 - (rnd() - 0.5) * 0.002) : prevClose;
+      const wick = s.base * s.amp * 0.25;
+      const high = Math.max(open, close) + rnd() * wick;
+      const low = Math.min(open, close) - rnd() * wick;
+      bars.push({ time: Math.floor(t / 1000), open, high, low, close });
+      prevClose = close;
+    }
+    return bars;
+  }
+  function sma(bars, period) {
+    const out = [];
+    for (let i = period - 1; i < bars.length; i++) {
+      let sum = 0; for (let j = i - period + 1; j <= i; j++) sum += bars[j].close;
+      out.push({ time: bars[i].time, value: sum / period });
+    }
+    return out;
+  }
+
+  const charts = {}; // symbol -> { chart, candleSeries, maSeries, lastBar }
+  function ensureChart(sym) {
+    if (charts[sym] || typeof LightweightCharts === "undefined") return;
+    const s = SYMS.find((x) => x.sym === sym);
+    const el = document.getElementById(safeId(sym));
+    if (!s || !el) return;
+    const chart = LightweightCharts.createChart(el, {
+      width: el.clientWidth, height: 220,
+      layout: { background: { color: "transparent" }, textColor: "#a6b3d0", fontFamily: "Figtree, sans-serif" },
+      grid: { vertLines: { color: "rgba(120,170,255,0.08)" }, horzLines: { color: "rgba(120,170,255,0.08)" } },
+      rightPriceScale: { borderColor: "rgba(120,170,255,0.18)" },
+      timeScale: { borderColor: "rgba(120,170,255,0.18)", timeVisible: true, secondsVisible: false }
+    });
+    const candleSeries = chart.addCandlestickSeries({ upColor: "#3ddc97", downColor: "#ff7a88", borderVisible: false, wickUpColor: "#3ddc97", wickDownColor: "#ff7a88" });
+    const bars = candlesFor(s);
+    candleSeries.setData(bars);
+    const maSeries = chart.addLineSeries({ color: "#22d3ff", lineWidth: 2 });
+    maSeries.setData(sma(bars, 10));
+    chart.timeScale().fitContent();
+    charts[sym] = { chart, candleSeries, maSeries, bars: bars.slice(), lastBar: bars[bars.length - 1] };
+    window.addEventListener("resize", () => chart.applyOptions({ width: el.clientWidth }));
+  }
+  function tickChart(sym) {
+    const c = charts[sym]; if (!c) return;
+    const s = SYMS.find((x) => x.sym === sym);
+    const bucket = Math.floor(Date.now() / CANDLE_MS);
+    const price = priceOf(s);
+    if (c.lastBar.time !== bucket) {
+      c.lastBar = { time: bucket, open: c.lastBar.close, high: price, low: price, close: price };
+      c.bars.push(c.lastBar);
+    } else {
+      c.lastBar.high = Math.max(c.lastBar.high, price);
+      c.lastBar.low = Math.min(c.lastBar.low, price);
+      c.lastBar.close = price;
+    }
+    c.candleSeries.update(c.lastBar);
+    const ma = sma(c.bars, 10);
+    if (ma.length) c.maSeries.update(ma[ma.length - 1]);
+  }
 
   let sb = null, session = null, tiers = null, trades = [];
 
@@ -37,6 +114,8 @@
     return !!e && (!e.expires_at || new Date(e.expires_at) > new Date());
   };
 
+  const safeId = (sym) => "chart-" + sym.replace(/[^a-z0-9]/gi, "-").toLowerCase();
+
   function renderSymbols() {
     $("#arena-symbols").innerHTML = SYMS.map((s) => {
       const p = priceOf(s);
@@ -44,9 +123,11 @@
         <div class="arena-row-info"><strong>${s.sym}</strong><span>${s.nm}</span></div>
         <div class="arena-row-price" data-price>${fmtPrice(s, p)}</div>
         <div class="arena-row-actions">
+          <button type="button" class="btn btn-ghost" data-chart="${s.sym}">Chart</button>
           <button type="button" class="btn btn-ghost" data-open="${s.sym}" data-side="buy">Buy</button>
           <button type="button" class="btn btn-ghost" data-open="${s.sym}" data-side="sell">Sell</button>
         </div>
+        <div class="arena-chart" id="${safeId(s.sym)}" hidden></div>
       </li>`;
     }).join("");
   }
@@ -54,6 +135,7 @@
     SYMS.forEach((s) => {
       const el = document.querySelector(`.arena-row[data-sym="${CSS.escape(s.sym)}"] [data-price]`);
       if (el) el.textContent = fmtPrice(s, priceOf(s));
+      if (charts[s.sym]) tickChart(s.sym);
     });
     // also refresh "now" price shown against each open position
     $$(".pos-now").forEach((el) => {
@@ -137,6 +219,11 @@
   let openSym = null, openSide = null;
 
   document.addEventListener("click", (e) => {
+    const ch = e.target.closest("[data-chart]");
+    if (ch) {
+      const el = document.getElementById(safeId(ch.dataset.chart));
+      if (el) { el.hidden = !el.hidden; if (!el.hidden) { ensureChart(ch.dataset.chart); requestAnimationFrame(() => charts[ch.dataset.chart]?.chart.applyOptions({ width: el.clientWidth })); } }
+    }
     const b = e.target.closest("[data-open]");
     if (b) {
       openSym = SYMS.find((s) => s.sym === b.dataset.open);
