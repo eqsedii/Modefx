@@ -40,6 +40,43 @@
       <ul class="markets" id="market-list"></ul>
     </section>
 
+    <section class="sheet" id="arena">
+      <div class="section-head-row">
+        <h2>Trading Arena</h2>
+        <span class="pill">Simulated</span>
+      </div>
+      <p class="sheet-sub">Practice buying and selling with virtual money. Prices here update automatically on a simulated pattern — they are not real market data.</p>
+
+      <p class="fine" id="arena-gate">Loading…</p>
+
+      <div id="arena-body" hidden>
+        <div class="balance-row">
+          <span class="fine">Virtual balance</span>
+          <div class="balance" id="arena-balance">KSh —</div>
+        </div>
+
+        <ul class="arena-symbols" id="arena-symbols"></ul>
+
+        <h3>Open positions</h3>
+        <div class="table-scroll">
+          <table class="admin-table">
+            <thead><tr><th>Symbol</th><th>Side</th><th>Qty</th><th>Entry</th><th>Now</th><th>Unrealized</th><th></th></tr></thead>
+            <tbody id="positions-list"></tbody>
+          </table>
+        </div>
+        <p class="fine" id="positions-empty" hidden>No open positions yet.</p>
+
+        <h3>Journal — closed trades</h3>
+        <div class="table-scroll">
+          <table class="admin-table">
+            <thead><tr><th>Symbol</th><th>Side</th><th>Qty</th><th>Entry</th><th>Exit</th><th>P/L</th><th>Notes</th></tr></thead>
+            <tbody id="journal-list"></tbody>
+          </table>
+        </div>
+        <p class="fine" id="journal-empty" hidden>No closed trades yet — your journal will fill in as you close positions.</p>
+      </div>
+    </section>
+
     <section class="sheet notice" id="real-money">
       <h2>Ready to trade real money?</h2>
       <p>Modefx is not a broker. It does not hold your money, take deposits or place real trades. If you decide to trade with real money, you would do that on <span data-broker-name>Deriv</span>, a separate company with its own terms, fees and risks.</p>
@@ -53,7 +90,40 @@
     <p class="fine">&copy; <span id="year"></span> Modefx</p>
   </footer>
   <nav class="tabbar" aria-label="Main"><a href="index.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Home</span></a><a href="markets.html" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l5-5 4 4 8-9"/><path d="M15 7h5v5"/></svg><span>Markets</span></a><a href="plans.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><path d="M9 6v12" stroke-dasharray="2 3"/></svg><span>Plans</span></a><a href="help.html"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/><path d="M12 17h.01"/></svg><span>Help</span></a><a href="account.html"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg><span>Account</span></a></nav>
+  <dialog id="open-dialog" aria-labelledby="open-title">
+    <form method="dialog" class="co-close"><button type="submit" aria-label="Close" data-quiet>&times;</button></form>
+    <h2 id="open-title">Buy EUR/USD</h2>
+    <p class="co-summary" id="open-price"></p>
+    <form id="open-form" novalidate>
+      <label for="open-qty">Quantity (units)</label>
+      <input id="open-qty" type="number" min="0.01" step="0.01" value="1" required>
+      <label for="open-reason">Why are you entering this trade?</label>
+      <input id="open-reason" type="text" placeholder="e.g. price bounced off support" required>
+      <label for="open-strategy">Strategy (optional)</label>
+      <input id="open-strategy" type="text" placeholder="e.g. breakout, trend following">
+      <label for="open-risk">Risk level</label>
+      <select id="open-risk"><option>Low</option><option selected>Medium</option><option>High</option></select>
+      <p class="msg" id="open-msg" role="alert"></p>
+      <button type="submit" class="btn btn-primary btn-block" id="open-submit" data-async>Place simulated trade</button>
+    </form>
+  </dialog>
+
+  <dialog id="close-dialog" aria-labelledby="close-title">
+    <form method="dialog" class="co-close"><button type="submit" aria-label="Close" data-quiet>&times;</button></form>
+    <h2 id="close-title">Close position</h2>
+    <p class="co-summary" id="close-price"></p>
+    <form id="close-form" novalidate>
+      <label for="close-reason">Why are you exiting now?</label>
+      <input id="close-reason" type="text" placeholder="e.g. hit my target" required>
+      <label for="close-note">Notes (optional)</label>
+      <input id="close-note" type="text" placeholder="what would you do differently?">
+      <p class="msg" id="close-msg" role="alert"></p>
+      <button type="submit" class="btn btn-primary btn-block" id="close-submit" data-async>Close trade</button>
+    </form>
+  </dialog>
+
   <script src="config.js"></script>
   <script src="app.js" defer></script>
+  <script src="arena.js" defer></script>
 </body>
 </html>

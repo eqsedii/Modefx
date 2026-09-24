@@ -239,3 +239,21 @@ dialog .fine { margin-top: .5rem; }
 .confirm-form { display: flex; gap: .5rem; align-items: center; }
 .confirm-form .receipt { font: 400 .85rem var(--body); color: var(--silver); background: rgba(3, 6, 15, .75); border: 1px solid var(--line); border-radius: 8px; padding: .5rem .6rem; width: 160px; }
 .confirm-form .btn { padding: .5rem .8rem; font-size: .85rem; white-space: nowrap; }
+
+/* ---------- Trading arena ---------- */
+.section-head-row { display: flex; align-items: center; justify-content: space-between; gap: .8rem; margin-bottom: .3rem; }
+#arena h3 { margin: 1.6rem 0 .8rem; font-size: 1rem; }
+.balance-row { display: flex; align-items: baseline; justify-content: space-between; background: rgba(30, 107, 255, .1); border: 1px solid var(--line-strong); border-radius: 12px; padding: .9rem 1.1rem; margin-bottom: 1.2rem; }
+.balance { font: 700 1.3rem var(--display); }
+.arena-symbols { list-style: none; margin: 0 0 .5rem; padding: 0; display: grid; gap: .6rem; }
+.arena-row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: .5rem 1rem; padding: .8rem; background: rgba(3, 6, 15, .5); border: 1px solid var(--line); border-radius: 10px; }
+.arena-row-info { display: flex; flex-direction: column; }
+.arena-row-info span { color: var(--mute); font-size: .82rem; }
+.arena-row-price { grid-column: 1; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--cyan); }
+.arena-row-actions { grid-column: 2; grid-row: 1 / span 2; display: flex; gap: .5rem; }
+.arena-row-actions .btn { padding: .5rem .9rem; font-size: .85rem; }
+@media (min-width: 560px) {
+  .arena-row { grid-template-columns: 1.4fr 1fr auto; }
+  .arena-row-price { grid-column: 2; }
+  .arena-row-actions { grid-column: 3; }
+}
