@@ -9,55 +9,13 @@
   const fmtKES = (n) => "KSh " + Number(n).toLocaleString("en-KE", { maximumFractionDigits: 2 });
   const msg = (el, text, kind = "") => { el.textContent = text; el.className = "msg " + kind; };
 
-  // Simulated instruments: a smooth, deterministic wave so everyone sees the same "live" price
-  // at any given moment. This is a practice sandbox, not real market data.
-  const SYMS = [
-    { sym: "EUR/USD", nm: "Euro / US dollar", cls: "Forex", base: 1.0842, amp: 0.006, period: 90000, phase: 0.3, dp: 4 },
-    { sym: "USD/KES", nm: "US dollar / Kenyan shilling", cls: "Forex", base: 129.10, amp: 0.004, period: 140000, phase: 1.1, dp: 2 },
-    { sym: "BTC/USD", nm: "Bitcoin", cls: "Crypto", base: 64210, amp: 0.03, period: 60000, phase: 2.0, dp: 0 },
-    { sym: "XAU/USD", nm: "Gold", cls: "Commodity", base: 2352.40, amp: 0.012, period: 110000, phase: 2.7, dp: 2 },
-    { sym: "SCOM", nm: "Safaricom (NSE)", cls: "Stock", base: 17.85, amp: 0.015, period: 130000, phase: 0.8, dp: 2 },
-    { sym: "US100", nm: "Nasdaq 100 index", cls: "Index", base: 18410, amp: 0.01, period: 100000, phase: 1.7, dp: 0 }
-  ];
-  const priceOf = (s) => s.base * (1 + s.amp * Math.sin((2 * Math.PI * Date.now()) / s.period + s.phase));
-  const priceAt = (s, t) => s.base * (1 + s.amp * Math.sin((2 * Math.PI * t) / s.period + s.phase));
-  const fmtPrice = (s, p) => p.toLocaleString("en-KE", { minimumFractionDigits: s.dp, maximumFractionDigits: s.dp });
-
-  // A small seeded random generator so the candle wicks look natural but are identical
-  // for everyone looking at the same moment — this is a practice sandbox, not live data.
-  function seededRandom(str) {
-    let h = 1779033703 ^ str.length;
-    for (let i = 0; i < str.length; i++) { h = Math.imul(h ^ str.charCodeAt(i), 3432918353); h = (h << 13) | (h >>> 19); }
-    return () => {
-      h = Math.imul(h ^ (h >>> 16), 2246822519); h = Math.imul(h ^ (h >>> 13), 3266489917); h ^= h >>> 16;
-      return (h >>> 0) / 4294967296;
-    };
-  }
-  const CANDLE_MS = 60000, CANDLE_COUNT = 60;
-  function candlesFor(s) {
-    const bucketNow = Math.floor(Date.now() / CANDLE_MS) * CANDLE_MS;
-    const bars = []; let prevClose = null;
-    for (let i = CANDLE_COUNT - 1; i >= 0; i--) {
-      const t = bucketNow - i * CANDLE_MS;
-      const rnd = seededRandom(s.sym + ":" + t);
-      const close = priceAt(s, t);
-      const open = prevClose == null ? close * (1 - (rnd() - 0.5) * 0.002) : prevClose;
-      const wick = s.base * s.amp * 0.25;
-      const high = Math.max(open, close) + rnd() * wick;
-      const low = Math.min(open, close) - rnd() * wick;
-      bars.push({ time: Math.floor(t / 1000), open, high, low, close });
-      prevClose = close;
-    }
-    return bars;
-  }
-  function sma(bars, period) {
-    const out = [];
-    for (let i = period - 1; i < bars.length; i++) {
-      let sum = 0; for (let j = i - period + 1; j <= i; j++) sum += bars[j].close;
-      out.push({ time: bars[i].time, value: sum / period });
-    }
-    return out;
-  }
+  // Shared with instrument.html via market-engine.js, so prices always match across pages.
+  const M = window.MFXMarket;
+  const SYMS = M.SYMS;
+  const priceOf = M.priceOf;
+  const fmtPrice = M.fmtPrice;
+  const candlesFor = (s) => M.candlesFor(s, 60000, 60);
+  const sma = M.sma;
 
   const charts = {}; // symbol -> { chart, candleSeries, maSeries, lastBar }
   function ensureChart(sym) {
@@ -84,7 +42,7 @@
   function tickChart(sym) {
     const c = charts[sym]; if (!c) return;
     const s = SYMS.find((x) => x.sym === sym);
-    const bucket = Math.floor(Date.now() / CANDLE_MS);
+    const bucket = Math.floor(Date.now() / 60000);
     const price = priceOf(s);
     if (c.lastBar.time !== bucket) {
       c.lastBar = { time: bucket, open: c.lastBar.close, high: price, low: price, close: price };
@@ -120,7 +78,7 @@
     $("#arena-symbols").innerHTML = SYMS.map((s) => {
       const p = priceOf(s);
       return `<li class="arena-row" data-sym="${s.sym}">
-        <div class="arena-row-info"><strong>${s.sym}</strong><span>${s.nm}</span></div>
+        <a class="arena-row-info" href="instrument.html?symbol=${encodeURIComponent(s.sym)}"><strong>${s.sym}</strong><span>${s.nm}</span></a>
         <div class="arena-row-price" data-price>${fmtPrice(s, p)}</div>
         <div class="arena-row-actions">
           <button type="button" class="btn btn-ghost" data-chart="${s.sym}">Chart</button>

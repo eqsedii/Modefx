@@ -126,9 +126,9 @@
     };
     mlist.innerHTML = DEMO.map((m) => {
       const up = m.chg >= 0;
-      return `<li class="market"><span class="sym">${m.sym}</span><span class="nm">${m.nm}</span>
+      return `<a class="market" href="instrument.html?symbol=${encodeURIComponent(m.sym)}"><span class="sym">${m.sym}</span><span class="nm">${m.nm}</span>
         <span class="cls">${m.cls}</span>${spark(m.seed, up)}
-        <span class="px">${m.px}</span><span class="chg ${up ? "up" : "down"}">${up ? "+" : ""}${m.chg.toFixed(2)}%</span></li>`;
+        <span class="px">${m.px}</span><span class="chg ${up ? "up" : "down"}">${up ? "+" : ""}${m.chg.toFixed(2)}%</span></a>`;
     }).join("");
   }
 

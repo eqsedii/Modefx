@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Instrument | Modefx</title>
+  <meta name="description" content="Live simulated chart and trading for practice on Modefx.">
+  <meta name="theme-color" content="#03060F">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png">
+  <link rel="apple-touch-icon" href="assets/icon-180.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="instrument" class="instrument-page">
+
+  <header class="instrument-bar">
+    <a class="back-btn" href="markets.html" aria-label="Back to Markets">&larr;</a>
+    <div class="instrument-id">
+      <strong id="ins-symbol">—</strong>
+      <span id="ins-name" class="fine">—</span>
+    </div>
+    <div class="instrument-price">
+      <div id="ins-price">—</div>
+      <div id="ins-change" class="fine">—</div>
+    </div>
+  </header>
+
+  <div class="instrument-stats">
+    <div><span class="fine">High</span><strong id="ins-high">—</strong></div>
+    <div><span class="fine">Low</span><strong id="ins-low">—</strong></div>
+    <div><span class="fine">Spread</span><strong id="ins-spread">—</strong></div>
+    <span class="pill">Simulated</span>
+  </div>
+
+  <div class="timeframe-row" id="timeframes">
+    <button type="button" data-tf="1m" class="active">1m</button>
+    <button type="button" data-tf="5m">5m</button>
+    <button type="button" data-tf="15m">15m</button>
+    <button type="button" data-tf="1H">1H</button>
+  </div>
+
+  <div class="instrument-chart" id="instrument-chart"></div>
+
+  <div class="instrument-gate" id="ins-gate"></div>
+
+  <div class="instrument-actions" id="ins-actions" hidden>
+    <button type="button" class="btn btn-ghost trade-btn sell" id="ins-sell" data-async>Sell</button>
+    <button type="button" class="btn btn-primary trade-btn buy" id="ins-buy" data-async>Buy</button>
+  </div>
+
+  <div class="instrument-positions" id="ins-positions" hidden>
+    <h3>Your open positions in this market</h3>
+    <div class="table-scroll">
+      <table class="admin-table"><thead><tr><th>Side</th><th>Qty</th><th>Entry</th><th>Unrealized</th><th></th></tr></thead>
+      <tbody id="ins-positions-list"></tbody></table>
+    </div>
+  </div>
+
+  <div id="loader" aria-hidden="true" role="status" aria-label="Loading">
+    <video muted playsinline preload="auto"><source src="assets/loader.mp4" type="video/mp4"><source src="assets/loader.webm" type="video/webm"></video>
+  </div>
+
+  <dialog id="open-dialog" aria-labelledby="open-title">
+    <form method="dialog" class="co-close"><button type="submit" aria-label="Close" data-quiet>&times;</button></form>
+    <h2 id="open-title">Buy EUR/USD</h2>
+    <p class="co-summary" id="open-price"></p>
+    <form id="open-form" novalidate>
+      <label for="open-qty">Quantity (units)</label>
+      <input id="open-qty" type="number" min="0.01" step="0.01" value="1" required>
+      <label for="open-reason">Why are you entering this trade?</label>
+      <input id="open-reason" type="text" placeholder="e.g. price bounced off support" required>
+      <label for="open-strategy">Strategy (optional)</label>
+      <input id="open-strategy" type="text" placeholder="e.g. breakout, trend following">
+      <label for="open-risk">Risk level</label>
+      <select id="open-risk"><option>Low</option><option selected>Medium</option><option>High</option></select>
+      <p class="msg" id="open-msg" role="alert"></p>
+      <button type="submit" class="btn btn-primary btn-block" id="open-submit" data-async>Place simulated trade</button>
+    </form>
+  </dialog>
+
+  <dialog id="close-dialog" aria-labelledby="close-title">
+    <form method="dialog" class="co-close"><button type="submit" aria-label="Close" data-quiet>&times;</button></form>
+    <h2 id="close-title">Close position</h2>
+    <p class="co-summary" id="close-price"></p>
+    <form id="close-form" novalidate>
+      <label for="close-reason">Why are you exiting now?</label>
+      <input id="close-reason" type="text" placeholder="e.g. hit my target" required>
+      <label for="close-note">Notes (optional)</label>
+      <input id="close-note" type="text" placeholder="what would you do differently?">
+      <p class="msg" id="close-msg" role="alert"></p>
+      <button type="submit" class="btn btn-primary btn-block" id="close-submit" data-async>Close trade</button>
+    </form>
+  </dialog>
+
+  <script src="market-engine.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js" defer></script>
+  <script src="config.js"></script>
+  <script src="instrument.js" defer></script>
+</body>
+</html>
