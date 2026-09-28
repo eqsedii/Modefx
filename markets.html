@@ -57,23 +57,10 @@
 
         <ul class="arena-symbols" id="arena-symbols"></ul>
 
-        <h3>Open positions</h3>
-        <div class="table-scroll">
-          <table class="admin-table">
-            <thead><tr><th>Symbol</th><th>Side</th><th>Qty</th><th>Entry</th><th>Now</th><th>Unrealized</th><th></th></tr></thead>
-            <tbody id="positions-list"></tbody>
-          </table>
+        <div class="rows arena-links">
+          <a class="row" href="positions.html"><strong>Open positions</strong><span>See and close everything you're currently holding.</span></a>
+          <a class="row" href="journal.html"><strong>Journal</strong><span>Every closed trade, with the reasons you gave.</span></a>
         </div>
-        <p class="fine" id="positions-empty" hidden>No open positions yet.</p>
-
-        <h3>Journal — closed trades</h3>
-        <div class="table-scroll">
-          <table class="admin-table">
-            <thead><tr><th>Symbol</th><th>Side</th><th>Qty</th><th>Entry</th><th>Exit</th><th>P/L</th><th>Notes</th></tr></thead>
-            <tbody id="journal-list"></tbody>
-          </table>
-        </div>
-        <p class="fine" id="journal-empty" hidden>No closed trades yet — your journal will fill in as you close positions.</p>
       </div>
     </section>
 
@@ -103,22 +90,13 @@
       <input id="open-strategy" type="text" placeholder="e.g. breakout, trend following">
       <label for="open-risk">Risk level</label>
       <select id="open-risk"><option>Low</option><option selected>Medium</option><option>High</option></select>
+      <div class="tools-grid">
+        <label>Stop-loss (optional)<input type="number" id="open-sl" step="any" placeholder="price"></label>
+        <label>Take-profit (optional)<input type="number" id="open-tp" step="any" placeholder="price"></label>
+      </div>
+      <p class="fine">If set, these close the trade automatically while you have Modefx open on this device.</p>
       <p class="msg" id="open-msg" role="alert"></p>
       <button type="submit" class="btn btn-primary btn-block" id="open-submit" data-async>Place simulated trade</button>
-    </form>
-  </dialog>
-
-  <dialog id="close-dialog" aria-labelledby="close-title">
-    <form method="dialog" class="co-close"><button type="submit" aria-label="Close" data-quiet>&times;</button></form>
-    <h2 id="close-title">Close position</h2>
-    <p class="co-summary" id="close-price"></p>
-    <form id="close-form" novalidate>
-      <label for="close-reason">Why are you exiting now?</label>
-      <input id="close-reason" type="text" placeholder="e.g. hit my target" required>
-      <label for="close-note">Notes (optional)</label>
-      <input id="close-note" type="text" placeholder="what would you do differently?">
-      <p class="msg" id="close-msg" role="alert"></p>
-      <button type="submit" class="btn btn-primary btn-block" id="close-submit" data-async>Close trade</button>
     </form>
   </dialog>
 

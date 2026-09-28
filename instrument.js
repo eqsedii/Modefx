@@ -127,6 +127,16 @@
     return !!e && (!e.expires_at || new Date(e.expires_at) > new Date());
   };
 
+  async function loadBalance() {
+    if (!sb) return;
+    const { data, error } = await sb.rpc("ensure_trading_account");
+    if (!error) {
+      lastBalance = Number(data);
+      $("#ins-balance").textContent = "KSh " + lastBalance.toLocaleString("en-KE", { maximumFractionDigits: 2 });
+      if (!$("#tools-panel").hidden) updateCalc();
+    }
+  }
+
   async function refreshGate() {
     const gate = $("#ins-gate");
     if (!session) {
@@ -146,22 +156,43 @@
       gate.innerHTML = "";
       $("#ins-actions").hidden = false;
     }
+    await loadBalance();
     await loadMyTrades();
   }
 
   async function loadMyTrades() {
     const { data } = await sb.from("trades").select("*").eq("symbol", s.sym).eq("status", "open").order("opened_at", { ascending: false });
     myTrades = data || [];
+    await checkAutoClose();
     const box = $("#ins-positions"), list = $("#ins-positions-list");
     box.hidden = myTrades.length === 0;
     list.innerHTML = myTrades.map((t) => {
       const now = M.priceOf(s);
       const unreal = (now - t.entry_price) * t.qty * (t.side === "buy" ? 1 : -1);
       const cls = unreal >= 0 ? "ok" : "err";
-      return `<tr><td>${t.side}</td><td>${t.qty}</td><td>${M.fmtPrice(s, t.entry_price)}</td>
+      const slTp = [t.stop_loss && `SL ${M.fmtPrice(s, t.stop_loss)}`, t.take_profit && `TP ${M.fmtPrice(s, t.take_profit)}`].filter(Boolean).join(" · ");
+      return `<tr><td>${t.side}</td><td>${t.qty}</td><td>${M.fmtPrice(s, t.entry_price)}${slTp ? `<br><span class="fine">${slTp}</span>` : ""}</td>
         <td class="${cls}">${unreal >= 0 ? "+" : ""}${unreal.toFixed(2)}</td>
         <td><button type="button" class="btn btn-ghost" data-close="${t.id}">Close</button></td></tr>`;
     }).join("");
+  }
+
+  // Closes a trade automatically if the live price has reached its stop-loss or take-profit —
+  // only while this page is open and polling; there is no server watching prices in the background.
+  let autoClosing = false;
+  async function checkAutoClose() {
+    if (autoClosing) return;
+    const now = M.priceOf(s);
+    for (const t of myTrades) {
+      const hitSL = t.stop_loss != null && (t.side === "buy" ? now <= t.stop_loss : now >= t.stop_loss);
+      const hitTP = t.take_profit != null && (t.side === "buy" ? now >= t.take_profit : now <= t.take_profit);
+      if (hitSL || hitTP) {
+        autoClosing = true;
+        await sb.rpc("close_trade", { p_trade_id: t.id, p_exit_price: now, p_reason_out: hitSL ? "Auto-closed: hit stop-loss" : "Auto-closed: hit take-profit", p_note: null });
+        autoClosing = false;
+        myTrades = myTrades.filter((x) => x.id !== t.id);
+      }
+    }
   }
 
   // ---- Open trade dialog ----
@@ -185,9 +216,11 @@
     if (!(qty > 0)) return msg(openMsg, "Enter a quantity greater than 0.");
     if (!reason) return msg(openMsg, "Say briefly why you're entering this trade.");
     openSubmit.disabled = true; msg(openMsg, "");
+    const sl = $("#open-sl").value.trim(), tp = $("#open-tp").value.trim();
     const { error } = await Loader.run(sb.rpc("open_trade", {
       p_symbol: s.sym, p_side: openSide, p_qty: qty, p_entry_price: M.priceOf(s),
-      p_reason_in: reason, p_strategy: $("#open-strategy").value.trim() || null, p_risk_level: $("#open-risk").value
+      p_reason_in: reason, p_strategy: $("#open-strategy").value.trim() || null, p_risk_level: $("#open-risk").value,
+      p_stop_loss: sl ? Number(sl) : null, p_take_profit: tp ? Number(tp) : null
     }));
     if (error) {
       const m = (error.message || "").includes("starter_locked") ? "Starter has locked. Get Growth to unlock trading again."
@@ -226,6 +259,53 @@
     closeDlg.close();
     await loadMyTrades();
   });
+
+  $("#tools-toggle").addEventListener("click", () => { $("#tools-panel").hidden = !$("#tools-panel").hidden; });
+  let lastBalance = 10000;
+  function updateCalc() {
+    const risk = Number($("#calc-risk").value), stopDist = Number($("#calc-stop").value);
+    const out = $("#calc-result");
+    if (!(risk > 0) || !(stopDist > 0)) { out.textContent = "Enter both values to see a suggested quantity."; $("#calc-use").dataset.qty = ""; return; }
+    const riskAmount = lastBalance * (risk / 100);
+    const qty = riskAmount / stopDist;
+    out.textContent = `Risking ${risk}% of KSh ${lastBalance.toLocaleString("en-KE")} (≈ KSh ${riskAmount.toFixed(2)}) over a ${stopDist} stop suggests a quantity of about ${qty.toFixed(4)} units.`;
+    $("#calc-use").dataset.qty = qty.toFixed(4);
+  }
+  $("#calc-risk").addEventListener("input", updateCalc);
+  $("#calc-stop").addEventListener("input", updateCalc);
+  $("#calc-use").addEventListener("click", () => {
+    const q = $("#calc-use").dataset.qty;
+    if (q && !openDlg.open) launchOpen("buy");
+    if (q) $("#open-qty").value = q;
+  });
+
+  // ---------------- Guided tour (first visit only) ----------------
+  const TOUR_STEPS = [
+    { title: "Your chart", body: "This is a simulated price chart — it moves on its own so you can practice reading candles anytime.", el: "#instrument-chart" },
+    { title: "Timeframes", body: "Switch how much history you see — from 1 minute up to 1 hour per candle.", el: "#timeframes" },
+    { title: "Your balance", body: "This is virtual money. Nothing here is real, so it's a safe place to practice.", el: "#ins-balance" },
+    { title: "Tools", body: "Open this to try the position size calculator — a way to size a trade around how much you're willing to risk.", el: "#tools-toggle" },
+    { title: "Buy and sell", body: "This is where you place a simulated trade. You'll be asked why you're entering — that habit is what builds real trading discipline.", el: "#ins-actions" }
+  ];
+  function runTour() {
+    let i = 0;
+    const box = $("#tour"), card = $(".tour-card", box);
+    $("#tour-total").textContent = TOUR_STEPS.length;
+    function show(step) {
+      $("#tour-n").textContent = step + 1;
+      $("#tour-title").textContent = TOUR_STEPS[step].title;
+      $("#tour-body").textContent = TOUR_STEPS[step].body;
+      $("#tour-next").textContent = step === TOUR_STEPS.length - 1 ? "Done" : "Next";
+      const target = document.querySelector(TOUR_STEPS[step].el);
+      if (target) { target.scrollIntoView({ block: "center", behavior: "smooth" }); }
+    }
+    function end() { box.hidden = true; try { localStorage.setItem("mfx-tour-done", "1"); } catch (_) {} }
+    $("#tour-skip").onclick = end;
+    $("#tour-next").onclick = () => { i++; if (i >= TOUR_STEPS.length) return end(); show(i); };
+    box.hidden = false;
+    show(0);
+  }
+  try { if (!localStorage.getItem("mfx-tour-done")) setTimeout(runTour, 900); } catch (_) {}
 
   // ---------------- Boot ----------------
   updateHeader();

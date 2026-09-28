@@ -28,6 +28,7 @@
   </header>
 
   <div class="instrument-stats">
+    <div><span class="fine">Balance</span><strong id="ins-balance">—</strong></div>
     <div><span class="fine">High</span><strong id="ins-high">—</strong></div>
     <div><span class="fine">Low</span><strong id="ins-low">—</strong></div>
     <div><span class="fine">Spread</span><strong id="ins-spread">—</strong></div>
@@ -39,6 +40,18 @@
     <button type="button" data-tf="5m">5m</button>
     <button type="button" data-tf="15m">15m</button>
     <button type="button" data-tf="1H">1H</button>
+    <button type="button" id="tools-toggle" class="tools-btn">Tools</button>
+  </div>
+
+  <div class="tools-panel" id="tools-panel" hidden>
+    <h3>Position size calculator</h3>
+    <p class="fine">Work out a quantity that risks a set share of your balance if price hits your stop.</p>
+    <div class="tools-grid">
+      <label>Risk % of balance<input type="number" id="calc-risk" value="1" min="0.1" step="0.1"></label>
+      <label>Stop distance (price units)<input type="number" id="calc-stop" placeholder="e.g. 0.002" step="any"></label>
+    </div>
+    <p class="fine" id="calc-result">Enter both values to see a suggested quantity.</p>
+    <button type="button" class="btn btn-ghost" id="calc-use" data-quiet>Use this quantity</button>
   </div>
 
   <div class="instrument-chart" id="instrument-chart"></div>
@@ -55,6 +68,19 @@
     <div class="table-scroll">
       <table class="admin-table"><thead><tr><th>Side</th><th>Qty</th><th>Entry</th><th>Unrealized</th><th></th></tr></thead>
       <tbody id="ins-positions-list"></tbody></table>
+    </div>
+    <p class="fine"><a class="link" href="positions.html">See all open positions</a> · <a class="link" href="journal.html">See your journal</a></p>
+  </div>
+
+  <div class="tour" id="tour" hidden>
+    <div class="tour-card">
+      <p class="tour-step">Step <span id="tour-n">1</span> of <span id="tour-total">5</span></p>
+      <h3 id="tour-title"></h3>
+      <p id="tour-body"></p>
+      <div class="tour-actions">
+        <button type="button" class="link" id="tour-skip" data-quiet>Skip</button>
+        <button type="button" class="btn btn-primary" id="tour-next" data-quiet>Next</button>
+      </div>
     </div>
   </div>
 
@@ -75,6 +101,11 @@
       <input id="open-strategy" type="text" placeholder="e.g. breakout, trend following">
       <label for="open-risk">Risk level</label>
       <select id="open-risk"><option>Low</option><option selected>Medium</option><option>High</option></select>
+      <div class="tools-grid">
+        <label>Stop-loss (optional)<input type="number" id="open-sl" step="any" placeholder="price"></label>
+        <label>Take-profit (optional)<input type="number" id="open-tp" step="any" placeholder="price"></label>
+      </div>
+      <p class="fine">If set, these close the trade automatically while you have Modefx open on this device — they won't trigger while you're away.</p>
       <p class="msg" id="open-msg" role="alert"></p>
       <button type="submit" class="btn btn-primary btn-block" id="open-submit" data-async>Place simulated trade</button>
     </form>

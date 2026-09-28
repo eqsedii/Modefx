@@ -5,6 +5,7 @@
 
   const C = window.MODEFX_CONFIG || {};
   const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const body = $("#arena-body");
   const fmtKES = (n) => "KSh " + Number(n).toLocaleString("en-KE", { maximumFractionDigits: 2 });
   const msg = (el, text, kind = "") => { el.textContent = text; el.className = "msg " + kind; };
@@ -16,8 +17,9 @@
   const fmtPrice = M.fmtPrice;
   const candlesFor = (s) => M.candlesFor(s, 60000, 60);
   const sma = M.sma;
+  const safeId = (sym) => "chart-" + sym.replace(/[^a-z0-9]/gi, "-").toLowerCase();
 
-  const charts = {}; // symbol -> { chart, candleSeries, maSeries, lastBar }
+  const charts = {}; // symbol -> { chart, candleSeries, maSeries, bars, lastBar }
   function ensureChart(sym) {
     if (charts[sym] || typeof LightweightCharts === "undefined") return;
     const s = SYMS.find((x) => x.sym === sym);
@@ -57,7 +59,7 @@
     if (ma.length) c.maSeries.update(ma[ma.length - 1]);
   }
 
-  let sb = null, session = null, tiers = null, trades = [];
+  let sb = null, session = null, tiers = null;
 
   async function getSB() {
     if (sb) return sb;
@@ -66,13 +68,10 @@
     sb = createClient(C.supabaseUrl, C.supabaseAnonKey);
     return sb;
   }
-
   const isUnlocked = (tierId) => {
     const e = (tiers || []).find((x) => x.tier === tierId);
     return !!e && (!e.expires_at || new Date(e.expires_at) > new Date());
   };
-
-  const safeId = (sym) => "chart-" + sym.replace(/[^a-z0-9]/gi, "-").toLowerCase();
 
   function renderSymbols() {
     $("#arena-symbols").innerHTML = SYMS.map((s) => {
@@ -95,53 +94,8 @@
       if (el) el.textContent = fmtPrice(s, priceOf(s));
       if (charts[s.sym]) tickChart(s.sym);
     });
-    // also refresh "now" price shown against each open position
-    $$(".pos-now").forEach((el) => {
-      const s = SYMS.find((x) => x.sym === el.dataset.sym);
-      if (s) el.textContent = fmtPrice(s, priceOf(s));
-    });
-  }
-  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-
-  function renderTrades() {
-    const open = trades.filter((t) => t.status === "open");
-    const closed = trades.filter((t) => t.status === "closed");
-
-    $("#positions-empty").hidden = open.length > 0;
-    $("#positions-list").innerHTML = open.map((t) => {
-      const s = SYMS.find((x) => x.sym === t.symbol);
-      const now = s ? priceOf(s) : t.entry_price;
-      const unreal = (now - t.entry_price) * t.qty * (t.side === "buy" ? 1 : -1);
-      const cls = unreal >= 0 ? "ok" : "err";
-      return `<tr>
-        <td>${t.symbol}</td><td>${t.side}</td><td>${t.qty}</td>
-        <td>${s ? fmtPrice(s, t.entry_price) : t.entry_price}</td>
-        <td class="pos-now" data-sym="${t.symbol}">${s ? fmtPrice(s, now) : now}</td>
-        <td class="${cls}">${unreal >= 0 ? "+" : ""}${unreal.toFixed(2)}</td>
-        <td><button type="button" class="btn btn-ghost" data-close="${t.id}">Close</button></td>
-      </tr>`;
-    }).join("");
-
-    $("#journal-empty").hidden = closed.length > 0;
-    $("#journal-list").innerHTML = closed.map((t) => {
-      const s = SYMS.find((x) => x.sym === t.symbol);
-      const cls = t.pnl >= 0 ? "ok" : "err";
-      const notes = [t.reason_in && `In: ${t.reason_in}`, t.reason_out && `Out: ${t.reason_out}`, t.note].filter(Boolean).join(" · ");
-      return `<tr>
-        <td>${t.symbol}</td><td>${t.side}</td><td>${t.qty}</td>
-        <td>${s ? fmtPrice(s, t.entry_price) : t.entry_price}</td>
-        <td>${s ? fmtPrice(s, t.exit_price) : t.exit_price}</td>
-        <td class="${cls}">${t.pnl >= 0 ? "+" : ""}${Number(t.pnl).toFixed(2)}</td>
-        <td class="fine">${notes || "—"}</td>
-      </tr>`;
-    }).join("");
   }
 
-  async function loadTrades() {
-    const { data } = await sb.from("trades").select("*").order("opened_at", { ascending: false });
-    trades = data || [];
-    renderTrades();
-  }
   async function loadBalance() {
     const { data, error } = await sb.rpc("ensure_trading_account");
     if (!error) $("#arena-balance").textContent = fmtKES(data);
@@ -169,10 +123,10 @@
 
     gate.hidden = true; body.hidden = false;
     renderSymbols();
-    await Promise.all([loadBalance(), loadTrades()]);
+    await loadBalance();
   }
 
-  // ---- Open trade dialog ----
+  // ---- Open trade dialog (Positions and Journal now live on their own full-screen pages) ----
   const openDlg = $("#open-dialog"), openMsg = $("#open-msg"), openSubmit = $("#open-submit");
   let openSym = null, openSide = null;
 
@@ -189,11 +143,10 @@
       $("#open-title").textContent = `${openSide === "buy" ? "Buy" : "Sell"} ${openSym.sym}`;
       $("#open-price").textContent = `Entry price: ${fmtPrice(openSym, priceOf(openSym))} (simulated)`;
       $("#open-qty").value = "1"; $("#open-reason").value = ""; $("#open-strategy").value = ""; $("#open-risk").value = "Medium";
+      const sl = $("#open-sl"), tp = $("#open-tp"); if (sl) sl.value = ""; if (tp) tp.value = "";
       msg(openMsg, ""); openSubmit.disabled = false; openSubmit.textContent = "Place simulated trade";
       openDlg.showModal();
     }
-    const c = e.target.closest("[data-close]");
-    if (c) startClose(c.dataset.close);
   });
 
   $("#open-form").addEventListener("submit", async (e) => {
@@ -203,9 +156,12 @@
     if (!(qty > 0)) return msg(openMsg, "Enter a quantity greater than 0.");
     if (!reason) return msg(openMsg, "Say briefly why you're entering this trade.");
     openSubmit.disabled = true; msg(openMsg, "");
+    const slEl = $("#open-sl"), tpEl = $("#open-tp");
     const { error } = await sb.rpc("open_trade", {
       p_symbol: openSym.sym, p_side: openSide, p_qty: qty, p_entry_price: priceOf(openSym),
-      p_reason_in: reason, p_strategy: $("#open-strategy").value.trim() || null, p_risk_level: $("#open-risk").value
+      p_reason_in: reason, p_strategy: $("#open-strategy").value.trim() || null, p_risk_level: $("#open-risk").value,
+      p_stop_loss: slEl && slEl.value.trim() ? Number(slEl.value) : null,
+      p_take_profit: tpEl && tpEl.value.trim() ? Number(tpEl.value) : null
     });
     if (error) {
       const m = (error.message || "").includes("starter_locked")
@@ -216,38 +172,7 @@
       msg(openMsg, m); openSubmit.disabled = false; return;
     }
     openDlg.close();
-    await Promise.all([loadTrades(), loadBalance()]);
-  });
-
-  // ---- Close trade dialog ----
-  const closeDlg = $("#close-dialog"), closeMsg = $("#close-msg"), closeSubmit = $("#close-submit");
-  let closingId = null, closingSym = null;
-
-  function startClose(id) {
-    const t = trades.find((x) => x.id === id);
-    if (!t) return;
-    closingId = id; closingSym = SYMS.find((s) => s.sym === t.symbol);
-    const now = closingSym ? priceOf(closingSym) : t.entry_price;
-    const unreal = (now - t.entry_price) * t.qty * (t.side === "buy" ? 1 : -1);
-    $("#close-title").textContent = `Close ${t.side} ${t.symbol}`;
-    $("#close-price").textContent = `Exit price: ${closingSym ? fmtPrice(closingSym, now) : now} (simulated) — estimated P/L ${unreal >= 0 ? "+" : ""}${unreal.toFixed(2)}`;
-    $("#close-reason").value = ""; $("#close-note").value = "";
-    msg(closeMsg, ""); closeSubmit.disabled = false; closeSubmit.textContent = "Close trade";
-    closeDlg.showModal();
-  }
-
-  $("#close-form").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const reason = $("#close-reason").value.trim();
-    if (!reason) return msg(closeMsg, "Say briefly why you're exiting now.");
-    closeSubmit.disabled = true; msg(closeMsg, "");
-    const exitPrice = closingSym ? priceOf(closingSym) : trades.find((t) => t.id === closingId).entry_price;
-    const { error } = await sb.rpc("close_trade", {
-      p_trade_id: closingId, p_exit_price: exitPrice, p_reason_out: reason, p_note: $("#close-note").value.trim() || null
-    });
-    if (error) { msg(closeMsg, "Couldn't close the trade. Try again."); closeSubmit.disabled = false; return; }
-    closeDlg.close();
-    await Promise.all([loadTrades(), loadBalance()]);
+    await loadBalance();
   });
 
   setInterval(() => { if (!body.hidden) tickPrices(); }, 4000);

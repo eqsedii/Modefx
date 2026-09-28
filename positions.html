@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Open Positions | Modefx</title>
+  <meta name="theme-color" content="#03060F">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="positions" class="instrument-page">
+  <header class="instrument-bar">
+    <a class="back-btn" href="markets.html" aria-label="Back to Markets">&larr;</a>
+    <div class="instrument-id"><strong>Open Positions</strong><span class="fine">Everything you currently hold</span></div>
+    <div class="instrument-price"><div id="pg-balance">—</div><div class="fine">Balance</div></div>
+  </header>
+
+  <main class="full-list">
+    <p class="fine" id="pg-gate"></p>
+    <div class="table-scroll">
+      <table class="admin-table" id="pg-table" hidden>
+        <thead><tr><th>Symbol</th><th>Side</th><th>Qty</th><th>Entry</th><th>Now</th><th>Unrealized</th><th></th></tr></thead>
+        <tbody id="pg-list"></tbody>
+      </table>
+    </div>
+    <p class="fine" id="pg-empty" hidden>No open positions. <a class="link" href="markets.html">Go find a market to trade</a>.</p>
+  </main>
+
+  <div id="loader" aria-hidden="true" role="status" aria-label="Loading">
+    <video muted playsinline preload="auto"><source src="assets/loader.mp4" type="video/mp4"><source src="assets/loader.webm" type="video/webm"></video>
+  </div>
+
+  <dialog id="close-dialog" aria-labelledby="close-title">
+    <form method="dialog" class="co-close"><button type="submit" aria-label="Close" data-quiet>&times;</button></form>
+    <h2 id="close-title">Close position</h2>
+    <p class="co-summary" id="close-price"></p>
+    <form id="close-form" novalidate>
+      <label for="close-reason">Why are you exiting now?</label>
+      <input id="close-reason" type="text" placeholder="e.g. hit my target" required>
+      <label for="close-note">Notes (optional)</label>
+      <input id="close-note" type="text" placeholder="what would you do differently?">
+      <p class="msg" id="close-msg" role="alert"></p>
+      <button type="submit" class="btn btn-primary btn-block" id="close-submit" data-async>Close trade</button>
+    </form>
+  </dialog>
+
+  <script src="market-engine.js" defer></script>
+  <script src="config.js"></script>
+  <script src="positions.js" defer></script>
+</body>
+</html>
