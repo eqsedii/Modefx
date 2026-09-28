@@ -64,6 +64,11 @@
 
   // ---------------- Chart ----------------
   let chart, candleSeries, maSeries, bars = [];
+  function resizeChart() {
+    if (!chart) return;
+    const el = $("#instrument-chart");
+    requestAnimationFrame(() => chart.applyOptions({ width: el.clientWidth, height: el.clientHeight }));
+  }
   function buildChart() {
     const el = $("#instrument-chart");
     el.innerHTML = "";
@@ -158,6 +163,7 @@
     }
     await loadBalance();
     await loadMyTrades();
+    resizeChart();
   }
 
   async function loadMyTrades() {
@@ -165,7 +171,9 @@
     myTrades = data || [];
     await checkAutoClose();
     const box = $("#ins-positions"), list = $("#ins-positions-list");
+    const wasHidden = box.hidden;
     box.hidden = myTrades.length === 0;
+    if (wasHidden !== box.hidden) resizeChart();
     list.innerHTML = myTrades.map((t) => {
       const now = M.priceOf(s);
       const unreal = (now - t.entry_price) * t.qty * (t.side === "buy" ? 1 : -1);
