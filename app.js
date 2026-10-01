@@ -132,6 +132,22 @@
     }).join("");
   }
 
+  // ---------------- Today's market pulse (plain-language, purely descriptive) ----------------
+  const pulseList = $("#pulse-list");
+  if (pulseList && window.MFXMarket) {
+    const M = window.MFXMarket;
+    const direction = (chg) => chg > 0.3 ? "up solidly" : chg > 0.05 ? "edging higher" : chg < -0.3 ? "down solidly" : chg < -0.05 ? "edging lower" : "roughly flat";
+    const choppiness = (rangePct) => rangePct > 1.5 ? "swinging more than usual today" : rangePct > 0.6 ? "moving a fairly normal amount" : "unusually calm today";
+    pulseList.innerHTML = M.SYMS.map((s) => {
+      const st = M.dailyStats(s);
+      const cls = st.chgPct >= 0 ? "up" : "down";
+      return `<li class="pulse-row">
+        <strong>${s.sym}</strong>
+        <span>is <span class="${cls}">${direction(st.chgPct)}</span> today (${st.chgPct >= 0 ? "+" : ""}${st.chgPct.toFixed(2)}%), and ${choppiness(st.rangePct)}.</span>
+      </li>`;
+    }).join("");
+  }
+
   /* ---------------- Tier ladder: shared state ---------------- */
   // myEntitlements: array of { tier, expires_at } for the signed-in user, refreshed after login and after a payment.
   let myEntitlements = null; // null = not loaded yet (signed out, or still loading)

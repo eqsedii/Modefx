@@ -316,3 +316,20 @@ body.instrument-page { height: 100vh; height: 100dvh; overflow: hidden; padding-
 .full-list { flex: 1; min-height: 0; overflow-y: auto; padding: 1rem var(--pad) calc(1rem + env(safe-area-inset-bottom, 0px)); }
 
 .arena-links { margin-top: 1.4rem; }
+
+/* ---------- Daily market pulse ---------- */
+.pulse-list { list-style: none; margin: 0; padding: 0; display: grid; }
+.pulse-row { padding: .7rem 0; border-top: 1px solid var(--line); font-size: .92rem; }
+.pulse-row:first-child { border-top: 0; padding-top: 0; }
+.pulse-row strong { margin-right: .4rem; }
+.pulse-row span { color: var(--mute); }
+.pulse-row .up { color: var(--ok); font-weight: 600; }
+.pulse-row .down { color: var(--err); font-weight: 600; }
+
+/* ---------- Lessons ---------- */
+.lessons { display: grid; gap: 1.2rem; }
+.lesson-card h2 { font-size: 1.1rem; margin-bottom: .7rem; }
+.lesson-card p { color: var(--mute); margin-bottom: .8rem; line-height: 1.6; }
+.lesson-card p:last-of-type { margin-bottom: 1rem; }
+.lesson-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .8rem; padding-top: .9rem; border-top: 1px solid var(--line); }
+.lesson-done { font-size: .85rem; }

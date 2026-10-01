@@ -73,5 +73,17 @@ window.MFXMarket = (() => {
     return out;
   }
 
-  return { SYMS, priceAt, priceOf, fmtPrice, bySym, seededRandom, candlesFor, sma };
+  // Plain stats for the day: % change vs 24h ago, and how wide today's range has been.
+  // Purely descriptive — no invented causes or news, since none of this is real data.
+  function dailyStats(s) {
+    const now = priceOf(s);
+    const dayAgo = priceAt(s, Date.now() - 24 * 3600000);
+    const chgPct = ((now - dayAgo) / dayAgo) * 100;
+    const dayBars = candlesFor(s, 3600000, 24);
+    const hi = Math.max(...dayBars.map((b) => b.high)), lo = Math.min(...dayBars.map((b) => b.low));
+    const rangePct = ((hi - lo) / s.base) * 100;
+    return { now, chgPct, hi, lo, rangePct };
+  }
+
+  return { SYMS, priceAt, priceOf, fmtPrice, bySym, seededRandom, candlesFor, sma, dailyStats };
 })();
