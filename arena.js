@@ -44,7 +44,7 @@
   function tickChart(sym) {
     const c = charts[sym]; if (!c) return;
     const s = SYMS.find((x) => x.sym === sym);
-    const bucket = Math.floor(Date.now() / 60000);
+    const bucket = Math.floor((Math.floor(Date.now() / 60000) * 60000) / 1000);
     const price = priceOf(s);
     if (c.lastBar.time !== bucket) {
       c.lastBar = { time: bucket, open: c.lastBar.close, high: price, low: price, close: price };

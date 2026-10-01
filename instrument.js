@@ -96,7 +96,7 @@
   function tickChart() {
     if (!chart) return;
     const { periodMs } = TF[tf];
-    const bucket = Math.floor(Date.now() / periodMs);
+    const bucket = Math.floor((Math.floor(Date.now() / periodMs) * periodMs) / 1000);
     const price = M.priceOf(s);
     const last = bars[bars.length - 1];
     if (!last || last.time !== bucket) {
@@ -314,6 +314,17 @@
     show(0);
   }
   try { if (!localStorage.getItem("mfx-tour-done")) setTimeout(runTour, 900); } catch (_) {}
+
+  // Some Android browsers don't size 100dvh to the true visible area (address bar, etc.),
+  // which left buttons below the fold. Pin the page to the actual visible height directly.
+  function fitViewport() {
+    const h = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+    document.body.style.height = h + "px";
+    resizeChart();
+  }
+  window.addEventListener("resize", fitViewport);
+  if (window.visualViewport) window.visualViewport.addEventListener("resize", fitViewport);
+  fitViewport();
 
   // ---------------- Boot ----------------
   updateHeader();
