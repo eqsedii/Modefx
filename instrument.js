@@ -60,6 +60,9 @@
     $("#ins-high").textContent = M.fmtPrice(s, hi);
     $("#ins-low").textContent = M.fmtPrice(s, lo);
     $("#ins-spread").textContent = M.fmtPrice(s, s.base * s.amp * 0.02);
+    const pill = $("#ins-pill");
+    if (M.isReal(s.sym)) { pill.textContent = "Real price"; pill.title = "This price is fetched from a real source. The chart's shape is still simulated."; }
+    else { pill.textContent = "Simulated"; pill.removeAttribute("title"); }
   }
 
   // ---------------- Chart ----------------
@@ -315,16 +318,7 @@
   }
   try { if (!localStorage.getItem("mfx-tour-done")) setTimeout(runTour, 900); } catch (_) {}
 
-  // Some Android browsers don't size 100dvh to the true visible area (address bar, etc.),
-  // which left buttons below the fold. Pin the page to the actual visible height directly.
-  function fitViewport() {
-    const h = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
-    document.body.style.height = h + "px";
-    resizeChart();
-  }
-  window.addEventListener("resize", fitViewport);
-  if (window.visualViewport) window.visualViewport.addEventListener("resize", fitViewport);
-  fitViewport();
+  window.addEventListener("resize", resizeChart);
 
   // ---------------- Boot ----------------
   updateHeader();

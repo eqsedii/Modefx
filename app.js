@@ -104,17 +104,10 @@
     }
   }
 
-  /* ---------------- Markets (demo data, not live) ---------------- */
+  /* ---------------- Markets (same live source as the Arena, so numbers always match) ---------------- */
   const mlist = $("#market-list");
-  if (mlist) {
-    const DEMO = [
-      { sym: "EUR/USD", nm: "Euro / US dollar", cls: "Forex", px: "1.0842", chg: 0.21, seed: 3 },
-      { sym: "USD/KES", nm: "US dollar / Kenyan shilling", cls: "Forex", px: "129.10", chg: -0.05, seed: 8 },
-      { sym: "BTC/USD", nm: "Bitcoin", cls: "Crypto", px: "64,210", chg: 1.84, seed: 15 },
-      { sym: "XAU/USD", nm: "Gold", cls: "Commodity", px: "2,352.40", chg: -0.32, seed: 21 },
-      { sym: "SCOM", nm: "Safaricom (NSE)", cls: "Stock", px: "17.85", chg: 0.56, seed: 34 },
-      { sym: "US100", nm: "Nasdaq 100 index", cls: "Index", px: "18,410", chg: 0.74, seed: 42 }
-    ];
+  if (mlist && window.MFXMarket) {
+    const M = window.MFXMarket;
     const rng = (s) => () => ((s = (s * 16807) % 2147483647) / 2147483647);
     const spark = (seed, up) => {
       const r = rng(seed * 977 + 13), n = 28; let y = 0; const pts = [];
@@ -124,12 +117,19 @@
       const col = up ? "#3ddc97" : "#ff7a88";
       return `<svg viewBox="0 0 130 34" aria-hidden="true" preserveAspectRatio="none"><polyline points="${d}" fill="none" stroke="${col}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
     };
-    mlist.innerHTML = DEMO.map((m) => {
-      const up = m.chg >= 0;
-      return `<a class="market" href="instrument.html?symbol=${encodeURIComponent(m.sym)}"><span class="sym">${m.sym}</span><span class="nm">${m.nm}</span>
-        <span class="cls">${m.cls}</span>${spark(m.seed, up)}
-        <span class="px">${m.px}</span><span class="chg ${up ? "up" : "down"}">${up ? "+" : ""}${m.chg.toFixed(2)}%</span></a>`;
-    }).join("");
+    const CLS = { "EUR/USD": "Forex", "USD/KES": "Forex", "BTC/USD": "Crypto", "XAU/USD": "Commodity", "SCOM": "Stock", "US100": "Index" };
+    const renderMarkets = () => {
+      mlist.innerHTML = M.SYMS.map((s, i) => {
+        const st = M.dailyStats(s);
+        const up = st.chgPct >= 0;
+        const tag = M.isReal(s.sym) ? `<span class="tag-real">real</span>` : `<span class="tag-sim">sim</span>`;
+        return `<a class="market" href="instrument.html?symbol=${encodeURIComponent(s.sym)}"><span class="sym">${s.sym} ${tag}</span><span class="nm">${s.nm}</span>
+          <span class="cls">${CLS[s.sym] || ""}</span>${spark(i * 7 + 3, up)}
+          <span class="px">${M.fmtPrice(s, st.now)}</span><span class="chg ${up ? "up" : "down"}">${up ? "+" : ""}${st.chgPct.toFixed(2)}%</span></a>`;
+      }).join("");
+    };
+    renderMarkets();
+    setInterval(renderMarkets, 15000);
   }
 
   // ---------------- Today's market pulse (plain-language, purely descriptive) ----------------
@@ -138,14 +138,19 @@
     const M = window.MFXMarket;
     const direction = (chg) => chg > 0.3 ? "up solidly" : chg > 0.05 ? "edging higher" : chg < -0.3 ? "down solidly" : chg < -0.05 ? "edging lower" : "roughly flat";
     const choppiness = (rangePct) => rangePct > 1.5 ? "swinging more than usual today" : rangePct > 0.6 ? "moving a fairly normal amount" : "unusually calm today";
-    pulseList.innerHTML = M.SYMS.map((s) => {
-      const st = M.dailyStats(s);
-      const cls = st.chgPct >= 0 ? "up" : "down";
-      return `<li class="pulse-row">
-        <strong>${s.sym}</strong>
-        <span>is <span class="${cls}">${direction(st.chgPct)}</span> today (${st.chgPct >= 0 ? "+" : ""}${st.chgPct.toFixed(2)}%), and ${choppiness(st.rangePct)}.</span>
-      </li>`;
-    }).join("");
+    const renderPulse = () => {
+      pulseList.innerHTML = M.SYMS.map((s) => {
+        const st = M.dailyStats(s);
+        const cls = st.chgPct >= 0 ? "up" : "down";
+        const tag = M.isReal(s.sym) ? `<span class="tag-real">real price</span>` : `<span class="tag-sim">simulated</span>`;
+        return `<li class="pulse-row">
+          <strong>${s.sym}</strong> ${tag}
+          <span>is <span class="${cls}">${direction(st.chgPct)}</span> today (${st.chgPct >= 0 ? "+" : ""}${st.chgPct.toFixed(2)}%), and ${choppiness(st.rangePct)}.</span>
+        </li>`;
+      }).join("");
+    };
+    renderPulse();
+    setInterval(renderPulse, 15000);
   }
 
   /* ---------------- Tier ladder: shared state ---------------- */

@@ -20,6 +20,30 @@ window.MFXMarket = (() => {
       w: [{ p: 6 * 3600000, ph: 1.7 }, { p: 26 * 60000, ph: 4.4 }, { p: 3 * 60000, ph: 0.2 }] }
   ];
 
+  // Real quotes (fetched from our own server, which fetches them from CoinGecko/ECB) are
+  // layered on top of the simulated formula below. A symbol with no real quote yet, or
+  // whose quote has gone stale, simply uses the simulated price — nothing breaks.
+  let realQuotes = {}, realFetchedAt = 0;
+  const REAL_STALE_MS = 90000;
+  async function refreshRealQuotes(apiBase) {
+    try {
+      const r = await fetch((apiBase || "") + "/api/market-quotes");
+      if (!r.ok) return;
+      const j = await r.json();
+      realQuotes = j; realFetchedAt = Date.now();
+    } catch (_) { /* keep using whatever we had, or fall back to simulated */ }
+  }
+  function startRealQuotes(apiBase, intervalMs = 20000) {
+    refreshRealQuotes(apiBase);
+    setInterval(() => refreshRealQuotes(apiBase), intervalMs);
+  }
+  function realQuoteFor(sym) {
+    if (Date.now() - realFetchedAt > REAL_STALE_MS) return null;
+    const q = realQuotes[sym];
+    return q ? q.price : null;
+  }
+  function isReal(sym) { return realQuoteFor(sym) != null; }
+
   function priceAt(s, t) {
     const [macro, swing, micro] = s.w;
     const v = 0.55 * Math.sin((2 * Math.PI * t) / macro.p + macro.ph)
@@ -27,7 +51,7 @@ window.MFXMarket = (() => {
             + 0.15 * Math.sin((2 * Math.PI * t) / micro.p + micro.ph);
     return s.base * (1 + s.amp * v);
   }
-  const priceOf = (s) => priceAt(s, Date.now());
+  const priceOf = (s) => realQuoteFor(s.sym) ?? priceAt(s, Date.now());
   const fmtPrice = (s, p) => p.toLocaleString("en-KE", { minimumFractionDigits: s.dp, maximumFractionDigits: s.dp });
   const bySym = (sym) => SYMS.find((x) => x.sym === sym);
 
@@ -77,13 +101,17 @@ window.MFXMarket = (() => {
   // Purely descriptive — no invented causes or news, since none of this is real data.
   function dailyStats(s) {
     const now = priceOf(s);
+    const q = realQuotes[s.sym];
     const dayAgo = priceAt(s, Date.now() - 24 * 3600000);
-    const chgPct = ((now - dayAgo) / dayAgo) * 100;
+    const chgPct = (q && q.chg24h != null) ? q.chg24h : ((now - dayAgo) / dayAgo) * 100;
     const dayBars = candlesFor(s, 3600000, 24);
     const hi = Math.max(...dayBars.map((b) => b.high)), lo = Math.min(...dayBars.map((b) => b.low));
     const rangePct = ((hi - lo) / s.base) * 100;
     return { now, chgPct, hi, lo, rangePct };
   }
 
-  return { SYMS, priceAt, priceOf, fmtPrice, bySym, seededRandom, candlesFor, sma, dailyStats };
+  const api = { SYMS, priceAt, priceOf, fmtPrice, bySym, seededRandom, candlesFor, sma, dailyStats, startRealQuotes, isReal };
+  // Starts itself — every page that loads this file gets real quotes automatically.
+  startRealQuotes((window.MODEFX_CONFIG || {}).apiBase);
+  return api;
 })();
