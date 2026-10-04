@@ -176,6 +176,16 @@
   });
 
   setInterval(() => { if (!body.hidden) tickPrices(); }, 4000);
+  window.addEventListener("mfx:real-quotes", () => {
+    Object.keys(charts).forEach((sym) => {
+      const s = SYMS.find((x) => x.sym === sym);
+      const bars = candlesFor(s);
+      charts[sym].candleSeries.setData(bars);
+      charts[sym].maSeries.setData(sma(bars, 10));
+      charts[sym].bars = bars.slice();
+      charts[sym].lastBar = bars[bars.length - 1];
+    });
+  });
 
   (async () => {
     const client = await getSB();

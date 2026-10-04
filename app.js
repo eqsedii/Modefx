@@ -129,6 +129,7 @@
       }).join("");
     };
     renderMarkets();
+    window.addEventListener("mfx:real-quotes", renderMarkets);
     setInterval(renderMarkets, 15000);
   }
 
@@ -150,6 +151,7 @@
       }).join("");
     };
     renderPulse();
+    window.addEventListener("mfx:real-quotes", renderPulse);
     setInterval(renderPulse, 15000);
   }
 

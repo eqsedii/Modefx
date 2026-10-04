@@ -39,6 +39,10 @@ A green candle closed higher than it opened. A red one closed lower. The blue li
           const m = M.sma(bars, 10); if (m.length) ma.update(m[m.length - 1]);
         }, 4000);
         window.addEventListener("resize", () => chart.applyOptions({ width: el.clientWidth }));
+        window.addEventListener("mfx:real-quotes", () => {
+          bars = M.candlesFor(s, 60000, 40);
+          candles.setData(bars); ma.setData(M.sma(bars, 10));
+        });
       }
     },
     {

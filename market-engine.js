@@ -31,6 +31,7 @@ window.MFXMarket = (() => {
       if (!r.ok) return;
       const j = await r.json();
       realQuotes = j; realFetchedAt = Date.now();
+      window.dispatchEvent(new CustomEvent("mfx:real-quotes"));
     } catch (_) { /* keep using whatever we had, or fall back to simulated */ }
   }
   function startRealQuotes(apiBase, intervalMs = 20000) {
@@ -44,14 +45,24 @@ window.MFXMarket = (() => {
   }
   function isReal(sym) { return realQuoteFor(sym) != null; }
 
-  function priceAt(s, t) {
+  function simulatedPriceAt(s, t) {
     const [macro, swing, micro] = s.w;
     const v = 0.55 * Math.sin((2 * Math.PI * t) / macro.p + macro.ph)
             + 0.30 * Math.sin((2 * Math.PI * t) / swing.p + swing.ph)
             + 0.15 * Math.sin((2 * Math.PI * t) / micro.p + micro.ph);
     return s.base * (1 + s.amp * v);
   }
-  const priceOf = (s) => realQuoteFor(s.sym) ?? priceAt(s, Date.now());
+  // When a real quote is live for this symbol, shift the ENTIRE simulated curve (past and
+  // present) by a constant amount so it lines up exactly with the real price right now.
+  // That keeps the simulated shape/volatility for chart texture, but removes any jump or
+  // mismatch between the chart, the ticker, and the daily % change — they all agree.
+  function priceAt(s, t) {
+    const real = realQuoteFor(s.sym);
+    if (real == null) return simulatedPriceAt(s, t);
+    const offset = real - simulatedPriceAt(s, Date.now());
+    return simulatedPriceAt(s, t) + offset;
+  }
+  const priceOf = (s) => priceAt(s, Date.now());
   const fmtPrice = (s, p) => p.toLocaleString("en-KE", { minimumFractionDigits: s.dp, maximumFractionDigits: s.dp });
   const bySym = (sym) => SYMS.find((x) => x.sym === sym);
 
@@ -101,7 +112,7 @@ window.MFXMarket = (() => {
   // Purely descriptive — no invented causes or news, since none of this is real data.
   function dailyStats(s) {
     const now = priceOf(s);
-    const q = realQuotes[s.sym];
+    const q = isReal(s.sym) ? realQuotes[s.sym] : null;
     const dayAgo = priceAt(s, Date.now() - 24 * 3600000);
     const chgPct = (q && q.chg24h != null) ? q.chg24h : ((now - dayAgo) / dayAgo) * 100;
     const dayBars = candlesFor(s, 3600000, 24);

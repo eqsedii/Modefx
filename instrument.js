@@ -324,6 +324,7 @@
   updateHeader();
   buildChart();
   setInterval(() => { updateHeader(); tickChart(); if (session) loadMyTrades(); }, 4000);
+  window.addEventListener("mfx:real-quotes", () => { updateHeader(); if (chart) loadBars(); });
 
   (async () => {
     const client = await getSB();
