@@ -76,8 +76,10 @@
   function renderSymbols() {
     $("#arena-symbols").innerHTML = SYMS.map((s) => {
       const p = priceOf(s);
+      const tagCls = M.isReal(s.sym) ? "tag-real" : "tag-sim";
+      const tagTxt = M.isReal(s.sym) ? "real" : "sim";
       return `<li class="arena-row" data-sym="${s.sym}">
-        <a class="arena-row-info" href="instrument.html?symbol=${encodeURIComponent(s.sym)}"><strong>${s.sym}</strong><span>${s.nm}</span></a>
+        <a class="arena-row-info" href="instrument.html?symbol=${encodeURIComponent(s.sym)}"><strong>${s.sym} <span class="row-tag ${tagCls}">${tagTxt}</span></strong><span>${s.nm}</span></a>
         <div class="arena-row-price" data-price>${fmtPrice(s, p)}</div>
         <div class="arena-row-actions">
           <button type="button" class="btn btn-ghost" data-chart="${s.sym}">Chart</button>
@@ -93,6 +95,17 @@
       const el = document.querySelector(`.arena-row[data-sym="${CSS.escape(s.sym)}"] [data-price]`);
       if (el) el.textContent = fmtPrice(s, priceOf(s));
       if (charts[s.sym]) tickChart(s.sym);
+    });
+  }
+  // Updates just the real/sim tag text in place, without rebuilding the rows — rebuilding
+  // would tear down any chart container a user currently has open.
+  function updateTags() {
+    SYMS.forEach((s) => {
+      const el = document.querySelector(`.arena-row[data-sym="${CSS.escape(s.sym)}"] .row-tag`);
+      if (!el) return;
+      const real = M.isReal(s.sym);
+      el.textContent = real ? "real" : "sim";
+      el.className = "row-tag " + (real ? "tag-real" : "tag-sim");
     });
   }
 
@@ -177,6 +190,8 @@
 
   setInterval(() => { if (!body.hidden) tickPrices(); }, 4000);
   window.addEventListener("mfx:real-quotes", () => {
+    if (body.hidden) return;
+    updateTags();
     Object.keys(charts).forEach((sym) => {
       const s = SYMS.find((x) => x.sym === sym);
       const bars = candlesFor(s);
