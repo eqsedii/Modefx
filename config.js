@@ -52,12 +52,12 @@ window.MODEFX_CONFIG = {
     },
     {
       id: "golden", name: "Golden", price: 5999, requires: "pro",
-      line: "The full platform, including a link to your Deriv account.",
+      line: "Predictions with levels, plus a saved link to your Deriv account.",
       features: [
         "Everything in Pro, unlocked forever",
-        "Link your Deriv account",
-        "AI market predictions (educational, not guaranteed)",
-        "Highest usage limits"
+        "Market predictions from real candles, with stop and target levels",
+        "Reasons behind every prediction, so you learn to read the chart",
+        "Save your Deriv login ID and open your broker in one tap"
       ]
     }
   ]

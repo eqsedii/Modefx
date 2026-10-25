@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Golden | Modefx</title>
+  <meta name="description" content="Modefx Golden: market predictions built from real candles with entry, stop and target levels, plus a saved link to your Deriv account.">
+  <meta name="theme-color" content="#03060F">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="golden" class="theme-gold">
+  <div class="bgvid" aria-hidden="true">
+    <video autoplay muted loop playsinline preload="auto" poster="assets/bg-poster.jpg"><source src="assets/bg.mp4" type="video/mp4"><source src="assets/bg.webm" type="video/webm"></video>
+  </div>
+  <div id="loader" aria-hidden="true" role="status" aria-label="Loading">
+    <video muted playsinline preload="auto"><source src="assets/loader.mp4" type="video/mp4"><source src="assets/loader.webm" type="video/webm"></video>
+  </div>
+  <header class="nav">
+    <a class="brand" href="index.html" aria-label="Modefx home"><img src="assets/mark.png" alt="" width="34" height="23"><span>Modefx</span></a>
+    <nav aria-label="Main"><a href="index.html">Home</a><a href="markets.html">Markets</a><a href="lessons.html">Lessons</a><a href="golden.html" aria-current="page">Golden</a><a href="plans.html">Plans</a><a href="help.html">Help</a></nav>
+    <a class="btn btn-ghost" id="nav-account" href="account.html">Sign in</a>
+  </header>
+
+  <main class="page">
+    <div class="page-head">
+      <span class="pill gold-pill">Golden</span>
+      <h1>Modefx Golden</h1>
+      <p>Predictions with levels, calculated from real candles, and a saved link to your Deriv account. Predictions are educational. Nothing here is advice and no outcome is guaranteed.</p>
+    </div>
+
+    <p class="fine" id="gold-gate"></p>
+
+    <section class="sheet notice" id="gold-teaser" hidden>
+      <h2>What's inside Golden</h2>
+      <ul class="plain-list">
+        <li><strong>Predictions:</strong> each market gets a bullish, bearish or neutral reading from trend, momentum and volatility, with a stop and two targets sized to current volatility.</li>
+        <li><strong>Reasons you can check:</strong> every reading lists the indicators behind it, so you learn to read the chart yourself.</li>
+        <li><strong>Deriv link:</strong> save your Deriv login ID next to your Modefx profile and jump straight to your broker when you are ready for real money.</li>
+      </ul>
+      <a class="btn btn-primary" href="plans.html">View plans</a>
+    </section>
+
+    <div id="gold-app" hidden>
+      <div class="subtabs" role="tablist" aria-label="Golden sections">
+        <button type="button" role="tab" data-tab="predictions" aria-selected="true">Predictions</button>
+        <button type="button" role="tab" data-tab="deriv" aria-selected="false">Deriv account</button>
+      </div>
+
+      <section data-panel="predictions">
+        <div class="sheet">
+          <div class="gold-head">
+            <h2>Market predictions</h2>
+            <span class="fine" id="pred-meta">Loading</span>
+          </div>
+          <p class="sheet-sub">Strength shows how many of the four checks agree. It is not the chance of a trade winning. Price data refreshes hourly.</p>
+          <div id="pred-list" class="pred-list" aria-live="polite"></div>
+          <p class="msg" id="pred-msg"></p>
+          <p class="fine">Markets without a real data feed (Safaricom, Nasdaq 100) are not predicted rather than guessed. Predictions describe what indicators show now. They can and do fail.</p>
+        </div>
+      </section>
+
+      <section data-panel="deriv" hidden>
+        <div class="sheet">
+          <h2>Your Deriv account</h2>
+          <p class="sheet-sub">Deriv is the licensed broker where real-money trading happens. Modefx does not hold your money or place trades. Saving your login ID gives you a one-tap route to your account. Never share your Deriv password or API token with anyone, including Modefx.</p>
+          <div id="deriv-linked" hidden class="deriv-card">
+            <div><span class="fine">Linked login ID</span><strong id="deriv-id"></strong><span class="fine" id="deriv-nick"></span></div>
+            <div class="cta-row"><a class="btn btn-primary" id="deriv-open" href="#" target="_blank" rel="noopener">Open Deriv</a><button type="button" class="btn btn-ghost" id="deriv-unlink">Remove link</button></div>
+          </div>
+          <div id="deriv-form-wrap">
+            <div class="field-row"><label for="deriv-input">Deriv login ID (looks like CR1234567)</label><input class="demo-input" id="deriv-input" autocomplete="off" autocapitalize="characters" maxlength="15" placeholder="CR1234567"></div>
+            <div class="field-row"><label for="deriv-nick-input">Nickname (optional)</label><input class="demo-input" id="deriv-nick-input" maxlength="40" placeholder="My real account"></div>
+            <div class="cta-row"><button type="button" class="btn btn-primary" id="deriv-save">Save link</button><a class="btn btn-ghost" id="deriv-signup" href="#" target="_blank" rel="noopener">Create a Deriv account</a></div>
+            <p class="msg" id="deriv-msg"></p>
+          </div>
+          <p class="fine">If you open a Deriv account through Modefx and Modefx earns a referral fee, that will be disclosed here before launch. Trading real markets can lose you all the money you put in.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-brand"><img src="assets/mark.png" alt="" width="34" height="23"><span>Modefx</span></div>
+    <p>Modefx provides simulated trading and educational content only. It is not a broker, does not hold client funds and does not provide investment advice. Trading real markets involves significant risk of loss.</p>
+    <p class="fine">&copy; <span id="year"></span> Modefx</p>
+  </footer>
+  <nav class="tabbar" aria-label="Main"><a href="index.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Home</span></a><a href="markets.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l5-5 4 4 8-9"/><path d="M15 7h5v5"/></svg><span>Markets</span></a><a href="lessons.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span>Lessons</span></a><a href="golden.html" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.5 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/></svg><span>Golden</span></a><a href="plans.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><path d="M9 6v12" stroke-dasharray="2 3"/></svg><span>Plans</span></a><a href="account.html"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg><span>Account</span></a></nav>
+  <script src="config.js"></script>
+  <script src="market-engine.js" defer></script>
+  <script src="app.js" defer></script>
+  <script src="effects.js" defer></script>
+  <script src="golden.js" defer></script>
+</body>
+</html>
