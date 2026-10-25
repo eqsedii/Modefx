@@ -140,6 +140,97 @@ Try both directions below with the same two prices and see how the result flips.
         $('[data-act="ls-buy"]', card).addEventListener("click", () => calc("buy"));
         $('[data-act="ls-sell"]', card).addEventListener("click", () => calc("sell"));
       }
+    },
+    {
+      id: "trend",
+      title: "6. Trend, range, and support/resistance",
+      body: `A market is in an uptrend when each high and low is higher than the last, a downtrend when each is lower, and a range when price keeps bouncing between a rough ceiling and floor instead of going anywhere. Most new traders fight the trend; most experienced ones trade with it, or wait for a range to break.
+Support is a price level that's stopped a fall more than once, like a floor. Resistance is a level that's stopped a rise more than once, like a ceiling. They're not exact lines — think of them as zones, and watch what happens when price returns to one: does it bounce again, or break through?`,
+      cta: { text: "Open a chart and spot the trend", href: "markets.html" },
+      demo: `<p class="fine">Open any instrument's chart on Markets. Ask yourself three questions: are the highs and lows mostly rising, falling, or sideways? Has price touched roughly the same level more than once? If it just broke through a level it bounced off before, that's often a bigger move starting.</p>`
+    },
+    {
+      id: "riskreward",
+      title: "7. Risk/reward and why you don't need to win every trade",
+      body: `Your win rate (the % of trades that end in profit) isn't the whole story. What matters is expectancy: your win rate multiplied by your average win, minus your loss rate multiplied by your average loss. A trader who's right only 4 times in 10 can still profit overall, if their average win is meaningfully bigger than their average loss.
+This is why lesson 4's stop-loss and take-profit habit matters so much — it's what lets you control the size of your average win and loss in the first place, before you even know which trades will work out.`,
+      cta: { text: "Set a stop-loss and take-profit on a real trade", href: "markets.html" },
+      demo: `<div class="tools-grid">
+          <label>Win rate %<input type="number" class="demo-input" id="demo-wr" value="40" min="0" max="100" step="1"></label>
+          <label>Avg win (KSh)<input type="number" class="demo-input" id="demo-aw" value="300" step="any"></label>
+          <label>Avg loss (KSh)<input type="number" class="demo-input" id="demo-al" value="100" step="any"></label>
+        </div>
+        <p class="fine" id="demo-rr-out"></p>`,
+      wire(card) {
+        const update = () => {
+          const wr = Number($("#demo-wr", card).value) / 100, aw = Number($("#demo-aw", card).value), al = Number($("#demo-al", card).value);
+          const out = $("#demo-rr-out", card);
+          if (!(aw > 0) || !(al > 0) || wr < 0 || wr > 1) { out.textContent = "Fill in all three fields."; return; }
+          const exp = wr * aw - (1 - wr) * al;
+          out.innerHTML = `Expectancy per trade: <span class="${exp >= 0 ? "ok" : "err"}">${exp >= 0 ? "+" : ""}KSh ${exp.toFixed(2)}</span> on average — ${exp >= 0 ? "profitable over many trades at this ratio, even though you lose more often than you win." : "a loser over time at this ratio, even though you win more often than you lose."}`;
+        };
+        ["demo-wr", "demo-aw", "demo-al"].forEach((id) => $("#" + id, card).addEventListener("input", update));
+        update();
+      }
+    },
+    {
+      id: "patterns",
+      title: "8. A few chart patterns worth knowing",
+      body: `Patterns are just a shorthand for things buyers and sellers tend to do. A double top is price hitting a level twice and failing to break it both times — often a sign the uptrend is running out of buyers. A double bottom is the mirror image at a low. Higher highs and higher lows forming a staircase is a healthy uptrend; a series of lower highs with one level holding as support is often the calm before that support breaks.
+Patterns aren't guarantees — they're probabilities. Treat them as one more piece of evidence alongside trend and your own risk rules, never as a signal to trade on by themselves.`,
+      cta: { text: "Look for a pattern on a real chart", href: "markets.html" },
+      demo: `<p class="fine">Double top: price rises, pulls back, rises to about the same level, then falls — like the letter M. Double bottom: the same shape upside down, like a W. Scan a few instruments on Markets and see if either shape jumps out at you.</p>`
+    },
+    {
+      id: "psychology",
+      title: "9. Trading psychology: your biggest risk is you",
+      body: `Most blown accounts aren't caused by one bad trade — they're caused by a reaction to one. FOMO (fear of missing out) pushes you into a trade late, after the easy move is already gone. Revenge trading pushes you to immediately win back a loss, usually by breaking your own risk rules. Overconfidence after a winning streak pushes you to size up right before the market reminds you it's still risky.
+The fix isn't willpower in the moment — it's the boring stuff from lessons 2 and 3: a written reason before every trade, and a risk size decided in advance. Discipline is what turns a good strategy into a profitable one; without it, even a good strategy fails.`,
+      cta: { text: "Write an honest journal entry today", href: "journal.html" },
+      demo: `<label class="fine">Which of these have you felt while trading or watching a market move?</label>
+        <div class="cta-row" style="justify-content:flex-start;flex-wrap:wrap;margin:.6rem 0">
+          <button type="button" class="btn btn-ghost" data-quiet data-act="psy-fomo">FOMO</button>
+          <button type="button" class="btn btn-ghost" data-quiet data-act="psy-revenge">Revenge trading</button>
+          <button type="button" class="btn btn-ghost" data-quiet data-act="psy-overconf">Overconfidence</button>
+        </div>
+        <p class="fine" id="demo-psy-out">Pick one to see how it usually plays out.</p>`,
+      wire(card) {
+        const notes = {
+          fomo: "You see a big move already happening, jump in late out of fear of missing it, and the move often reverses right after you enter.",
+          revenge: "A trade loses, so you immediately open another — bigger, faster, with no real reason — trying to win the loss back. It usually compounds the damage.",
+          overconf: "A winning streak feels like skill, so position sizes creep up without a plan. The next normal loss then hurts far more than it should."
+        };
+        const out = $("#demo-psy-out", card);
+        card.addEventListener("click", (e) => {
+          const b = e.target.closest("[data-act]"); if (!b) return;
+          const key = b.dataset.act.replace("psy-", "");
+          out.textContent = notes[key] || "";
+        });
+      }
+    },
+    {
+      id: "orders",
+      title: "10. Order types, spread, and slippage",
+      body: `A market order fills immediately at the best available price. A limit order only fills at a price you choose, or better — useful for entering at support/resistance instead of chasing price. The spread is the small gap between the buy price and the sell price; it's effectively a built-in cost you pay the moment you open a trade. Slippage is when your actual fill price differs from what you expected, usually because the price moved fast between you clicking and the order reaching the market.
+None of this is unique to Modefx — every real broker works this way too. Getting comfortable with it here, where nothing real is at risk, means it won't surprise you later.`,
+      cta: { text: "Check the spread on a real instrument", href: "markets.html" },
+      demo: `<div class="tools-grid">
+          <label>Bid (sell) price<input type="number" class="demo-input" id="demo-bid" value="1.0838" step="any"></label>
+          <label>Ask (buy) price<input type="number" class="demo-input" id="demo-ask" value="1.0840" step="any"></label>
+          <label>Quantity<input type="number" class="demo-input" id="demo-ord-qty" value="1000" step="any"></label>
+        </div>
+        <p class="fine" id="demo-ord-out"></p>`,
+      wire(card) {
+        const update = () => {
+          const bid = Number($("#demo-bid", card).value), ask = Number($("#demo-ask", card).value), qty = Number($("#demo-ord-qty", card).value);
+          const out = $("#demo-ord-out", card);
+          if (!(bid > 0) || !(ask > 0) || !(qty > 0) || ask < bid) { out.textContent = "Enter a bid, an ask (ask ≥ bid), and a quantity."; return; }
+          const spread = ask - bid;
+          out.innerHTML = `Spread: <span>${spread.toFixed(5)}</span> per unit. Buying then immediately selling ${qty} units would cost about <span class="err">${(spread * qty).toFixed(2)}</span> in spread alone, before the price has even moved.`;
+        };
+        ["demo-bid", "demo-ask", "demo-ord-qty"].forEach((id) => $("#" + id, card).addEventListener("input", update));
+        update();
+      }
     }
   ];
 
