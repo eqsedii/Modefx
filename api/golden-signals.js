@@ -93,7 +93,7 @@ async function commentary(items) {
       headers: { "content-type": "application/json", "x-api-key": key, "anthropic-version": "2023-06-01" },
       body: JSON.stringify({
         model: "claude-haiku-5-5", max_tokens: 700,
-        system: "You write short educational market notes for beginner traders in Kenya. For each symbol write at most 2 plain sentences explaining what the indicators show and one thing to watch. Never promise outcomes, never say 'will', never give personal advice. Reply with ONLY a JSON object mapping each symbol to its note.",
+        system: "You write short educational market notes for beginner traders around the world. For each symbol write at most 2 plain sentences explaining what the indicators show and one thing to watch. Never promise outcomes, never say 'will', never give personal advice. Reply with ONLY a JSON object mapping each symbol to its note.",
         messages: [{ role: "user", content: JSON.stringify(brief) }]
       })
     });
