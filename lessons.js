@@ -68,7 +68,7 @@ After a few trades, open your Journal and read your own reasons back. You'll sta
       id: "sizing",
       title: "3. Position sizing: the boring skill that matters most",
       body: `New traders obsess over which direction to trade. Experienced ones obsess over how much to risk. If you only ever risk a small, consistent slice of your balance on each trade — many traders use around 1% — one bad trade can't hurt you badly, and you stay in the game long enough to get better.
-Try the calculator below with an example balance of KSh ${EXAMPLE_BALANCE.toLocaleString("en-KE")} — the real one in any market's Tools panel works exactly the same way.`,
+Try the calculator below with an example balance of $${EXAMPLE_BALANCE.toLocaleString(undefined)} — the real one in any market's Tools panel works exactly the same way.`,
       cta: { text: "Open the real calculator in a market", href: "markets.html" },
       demo: `<div class="tools-grid">
           <label>Risk % of balance<input type="number" class="demo-input" id="demo-risk" value="1" min="0.1" step="0.1"></label>
@@ -81,7 +81,7 @@ Try the calculator below with an example balance of KSh ${EXAMPLE_BALANCE.toLoca
           const out = $("#demo-sizing-out", card);
           if (!(risk > 0) || !(stop > 0)) { out.textContent = "Enter both values to see a suggested quantity."; return; }
           const riskAmt = EXAMPLE_BALANCE * (risk / 100);
-          out.textContent = `Risking ${risk}% of KSh ${EXAMPLE_BALANCE.toLocaleString("en-KE")} (≈ KSh ${riskAmt.toFixed(2)}) over that stop suggests a quantity of about ${(riskAmt / stop).toFixed(4)} units.`;
+          out.textContent = `Risking ${risk}% of $${EXAMPLE_BALANCE.toLocaleString(undefined)} (≈ $${riskAmt.toFixed(2)}) over that stop suggests a quantity of about ${(riskAmt / stop).toFixed(4)} units.`;
         };
         $("#demo-risk", card).addEventListener("input", update);
         $("#demo-stop", card).addEventListener("input", update);
@@ -157,8 +157,8 @@ This is why lesson 4's stop-loss and take-profit habit matters so much — it's 
       cta: { text: "Set a stop-loss and take-profit on a real trade", href: "markets.html" },
       demo: `<div class="tools-grid">
           <label>Win rate %<input type="number" class="demo-input" id="demo-wr" value="40" min="0" max="100" step="1"></label>
-          <label>Avg win (KSh)<input type="number" class="demo-input" id="demo-aw" value="300" step="any"></label>
-          <label>Avg loss (KSh)<input type="number" class="demo-input" id="demo-al" value="100" step="any"></label>
+          <label>Avg win ($)<input type="number" class="demo-input" id="demo-aw" value="300" step="any"></label>
+          <label>Avg loss ($)<input type="number" class="demo-input" id="demo-al" value="100" step="any"></label>
         </div>
         <p class="fine" id="demo-rr-out"></p>`,
       wire(card) {

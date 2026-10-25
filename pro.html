@@ -29,10 +29,12 @@
 
   <main class="page">
     <div class="page-head">
-      <span class="pill">Pro</span>
+      <span class="pill">Level 3</span>
       <h1>Modefx Pro</h1>
       <p>Advanced lessons, a reviewer for your own journal, an economic calendar in plain language, a strategy playbook and a community board. Everything here is educational and uses simulated practice trades.</p>
     </div>
+
+    <nav class="level-nav" id="level-nav" aria-label="Lesson levels"></nav>
 
     <p class="fine" id="pro-gate"></p>
 
@@ -41,7 +43,7 @@
       <ul class="plain-list">
         <li><strong>Pro lessons:</strong> 22 deeper lessons with calculators: market structure, indicators, risk math, trade management, news, psychology and testing a strategy.</li>
         <li><strong>Analyst:</strong> a plain-language market explainer, and a review of your own journal that finds your habits.</li>
-        <li><strong>Calendar:</strong> central bank and jobs-report dates in Nairobi time, with notes on what each one means for price.</li>
+        <li><strong>Calendar:</strong> central bank and jobs-report dates in your local time, with notes on what each one means for price.</li>
         <li><strong>Strategies:</strong> write your playbook once, run a pre-trade checklist, and see how each strategy performs.</li>
         <li><strong>Community:</strong> post, ask and comment with other Pro traders.</li>
       </ul>
@@ -84,7 +86,7 @@
       <section data-panel="calendar" id="calendar" hidden>
         <div class="sheet">
           <h2>Economic calendar</h2>
-          <p class="sheet-sub">Big scheduled events that can move prices fast, shown in Nairobi time. Dates marked "Scheduled" were published by the central bank. "Typical" dates follow a usual pattern and can shift, so confirm them on the official source before you plan around them.</p>
+          <p class="sheet-sub">Big scheduled events that can move prices fast, shown in your local time. Dates marked "Scheduled" were published by the central bank. "Typical" dates follow a usual pattern and can shift, so confirm them on the official source before you plan around them.</p>
           <div class="field-row">
             <label for="cal-sym">Show events that matter for</label>
             <select id="cal-sym" class="demo-input"></select>
@@ -176,6 +178,7 @@
   <script src="pro-lessons.js" defer></script>
   <script src="pro.js" defer></script>
   <script src="effects.js" defer></script>
+  <script src="levels.js" defer></script>
   <script src="site.js" defer></script>
 </body>
 </html>

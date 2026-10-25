@@ -3,7 +3,7 @@
   const C = window.MODEFX_CONFIG || {};
   const $ = (s, r = document) => r.querySelector(s);
   let sb = null, session = null;
-  const fmtKES = (n) => "KSh " + Number(n).toLocaleString("en-KE");
+  const fmtKES = (n) => "KSh " + Number(n).toLocaleString(undefined);
 
   async function getSB() {
     if (sb) return sb;
@@ -25,7 +25,7 @@
   const statusEl = $("#admin-status"), listEl = $("#payment-list");
 
   function row(p) {
-    const when = new Date(p.created_at).toLocaleString("en-KE", { dateStyle: "medium", timeStyle: "short" });
+    const when = new Date(p.created_at).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
     const cls = p.status === "success" ? "ok" : p.status === "failed" ? "err" : "info";
     const detail = p.status === "success" ? (p.mpesa_receipt || "—") : (p.failure_reason || "");
     const action = p.status === "success"

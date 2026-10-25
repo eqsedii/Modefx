@@ -4,7 +4,7 @@
   const $ = (s) => document.querySelector(s);
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const mins = (a) => Math.max(1, Math.round(a.body.join(" ").split(/\s+/).length / 200));
-  const when = (d) => new Date(d).toLocaleDateString("en-KE", { day: "numeric", month: "long", year: "numeric" });
+  const when = (d) => new Date(d).toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" });
   function route() {
     const a = A.find((x) => x.slug === location.hash.slice(1));
     $("#ins-list").hidden = !!a; $("#ins-article").hidden = !a;

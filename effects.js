@@ -100,7 +100,7 @@
     const el = $("#home-ladder"); if (!el || !C.tiers) return;
     el.innerHTML = C.tiers.map((t, i) => `<a class="rung ${t.id === "golden" ? "rung-gold" : ""}" href="plans.html" style="--i:${i}">
       <small>${i === 0 ? "Start here" : "Needs " + esc(C.tiers[i - 1].name)}</small>
-      <strong>${esc(t.name)}</strong><span class="rprice">KSh ${t.price.toLocaleString("en-KE")}</span>
+      <strong>${esc(t.name)}</strong><span class="rprice">KSh ${t.price.toLocaleString(undefined)}</span>
       <p>${esc(t.features[1] || t.line)}</p></a>`).join("");
   }
 
@@ -109,8 +109,8 @@
     const els = $$("[data-count]"); if (!els.length) return;
     const run = (el) => {
       const to = +el.dataset.count, dur = 1100, t0 = performance.now();
-      if (reduce) { el.textContent = to.toLocaleString("en-KE"); return; }
-      const step = (t) => { const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3); el.textContent = Math.round(to * e).toLocaleString("en-KE"); if (p < 1) requestAnimationFrame(step); };
+      if (reduce) { el.textContent = to.toLocaleString(undefined); return; }
+      const step = (t) => { const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3); el.textContent = Math.round(to * e).toLocaleString(undefined); if (p < 1) requestAnimationFrame(step); };
       requestAnimationFrame(step);
     };
     const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { run(e.target); io.unobserve(e.target); } }), { threshold: .6 });

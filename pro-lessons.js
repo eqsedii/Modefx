@@ -308,9 +308,9 @@ Decide the plan before you enter and write it down. Changing the rules mid-trade
 
   L.push({
     id: "sessions", cat: "Execution",
-    title: "Trading sessions and liquidity, in Nairobi time",
+    title: "Trading sessions and liquidity, in your local time",
     body: `Forex trades around the clock on weekdays, but activity moves between four main centres: Sydney, Tokyo, London and New York. Liquidity (how many orders are available) and volatility are highest when sessions overlap, so spreads are usually tighter and moves are cleaner then. The London and New York overlap is the busiest part of the day for EUR/USD and gold.
-Nairobi is UTC+3 all year with no daylight saving, but London and New York change their clocks, so the Nairobi time of each open shifts by an hour at different times of the year. The tool below reads each city's real local time and shows which sessions are open right now.
+London and New York change their clocks twice a year, so the time each session opens in your own time zone can shift by an hour. The tool below reads each city's real local time and shows which sessions are open right now, in your time.
 Rules of thumb: quiet Asian-session hours suit range trading in some pairs. The first hour after the London open often brings the day's first strong move. Late Friday and the minutes around major news have thin liquidity and wider spreads. Match your strategy to the hours it was designed for.`,
     cta: { text: "Watch a market live", href: "markets.html" },
     demo: `<p class="fine" id="ss-out">Checking sessions...</p>`,
@@ -326,9 +326,9 @@ Rules of thumb: quiet Asian-session hours suit range trading in some pairs. The 
         const g = (t) => f.find((p) => p.type === t).value;
         return { h: Number(g("hour")), m: Number(g("minute")), wd: g("weekday") };
       };
-      const eat = (d) => d.toLocaleTimeString("en-KE", { timeZone: "Africa/Nairobi", hour: "2-digit", minute: "2-digit", hour12: false });
-      // Find the Nairobi clock time of an open or close by scanning today's minutes in UTC.
-      const nairobiOf = (s, hour) => {
+      const eat = (d) => d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: false });
+      // Find your local clock time of an open or close by scanning today's minutes in UTC.
+      const localOf = (s, hour) => {
         const base = new Date(); base.setUTCMinutes(0, 0, 0);
         for (let i = 0; i < 24 * 2; i++) {
           const d = new Date(base.getTime() - 24 * 3600000 + i * 1800000);
@@ -343,9 +343,9 @@ Rules of thumb: quiet Asian-session hours suit range trading in some pairs. The 
           const p = parts(s.tz, now);
           const weekday = !["Sat", "Sun"].includes(p.wd);
           const open = weekday && p.h >= s.o && p.h < s.c;
-          return `<li><strong>${s.n}</strong>: <span class="${open ? "ok" : "err"}">${open ? "open" : "closed"}</span> <span class="fine">(opens ${nairobiOf(s, s.o)}, closes ${nairobiOf(s, s.c)} Nairobi time)</span></li>`;
+          return `<li><strong>${s.n}</strong>: <span class="${open ? "ok" : "err"}">${open ? "open" : "closed"}</span> <span class="fine">(opens ${localOf(s, s.o)}, closes ${localOf(s, s.c)} your time)</span></li>`;
         }).join("");
-        $("#ss-out", card).innerHTML = `<ul class="plain-list">${rows}</ul><span class="fine">Now: ${eat(now)} in Nairobi. Hours shown are 08:00 to 17:00 local (Tokyo 09:00 to 18:00), and are approximate.</span>`;
+        $("#ss-out", card).innerHTML = `<ul class="plain-list">${rows}</ul><span class="fine">Now: ${eat(now)} your time. Hours shown are 08:00 to 17:00 local (Tokyo 09:00 to 18:00), and are approximate.</span>`;
       };
       draw(); setInterval(draw, 30000);
     }
@@ -357,7 +357,7 @@ Rules of thumb: quiet Asian-session hours suit range trading in some pairs. The 
     title: "Fundamentals: why markets move on rates, inflation and jobs",
     body: `Technical analysis studies price. Fundamental analysis studies why price should be moving. For currencies, the biggest driver is interest rates. Higher rates, or expectations of higher rates, tend to attract money into a currency and strengthen it. Central banks set rates mainly in response to inflation and employment.
 The data to know: inflation (CPI), jobs reports (the US Non-Farm Payrolls, NFP), GDP growth, retail sales, and central bank rate decisions and statements. Markets move on the surprise: the gap between the number and what was expected. A rise in inflation that was fully expected may do nothing. A smaller rise than forecast can move price sharply.
-Closer to home, the Central Bank of Kenya's rate decisions, KNBS inflation numbers and the shilling's moves against the dollar shape USD/KES. For Safaricom (SCOM) and other NSE stocks, earnings, dividends and market-wide sentiment matter most.
+Closer to home, your own central bank's rate decisions, your national statistics office's inflation numbers and your currency's moves against the dollar shape the pairs you trade. For individual stocks, earnings, dividends and market-wide sentiment matter most.
 You do not need to forecast the data. You need to know when it is coming so you are not surprised by a sudden spike.`,
     cta: { text: "See upcoming event types", href: "#calendar" }
   });
@@ -372,10 +372,10 @@ Never add to a losing position into a news release hoping the number will rescue
   });
 
   L.push({
-    id: "kenya", cat: "Markets and news",
-    title: "Trading from Kenya: regulation, scams and staying safe",
-    body: `Real-money trading is done with a broker, not on Modefx. Before you ever deposit, check the broker's regulation. In Kenya, the Capital Markets Authority (CMA) licenses investment firms. Look the firm up on the CMA's own website, not in an ad. Many forex and crypto brokers that advertise to Kenyans operate offshore, so read their terms and know where your money is held.
-Red flags: guaranteed returns, "signals" for a fee with fake profit screenshots, anyone asking you to deposit through a private person's M-Pesa number, pressure to deposit quickly, and recovery services that charge up front after you lost money.
+    id: "regulation", cat: "Markets and news",
+    title: "Choosing a broker anywhere: regulation, scams and staying safe",
+    body: `Real-money trading is done with a broker, not on Modefx. Before you ever deposit, check the broker's regulation. Each country has its own financial regulator, for example the FCA in the UK, ASIC in Australia, the SEC and CFTC in the US, CySEC in Cyprus and the CMA in Kenya. Look the firm up on your regulator's own website, not in an ad. Many online brokers operate offshore, so read their terms, confirm they accept clients from your country and know where your money is held.
+Red flags: guaranteed returns, "signals" for a fee with fake profit screenshots, anyone asking you to deposit into a private person's account or mobile wallet, pressure to deposit quickly, and recovery services that charge up front after you lost money.
 Be honest about the odds too. Regulators in several countries publish disclosures showing that a majority of retail leveraged-trading accounts lose money. Practice here first, trade only money you can afford to lose, keep records, and ask a tax professional how profits are treated for you. Modefx does not provide financial or tax advice.`,
     cta: { text: "Read how Modefx handles real money", href: "help.html" }
   });

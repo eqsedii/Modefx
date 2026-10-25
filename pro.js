@@ -6,7 +6,7 @@
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const money = (n) => (n >= 0 ? "+" : "-") + Math.abs(n).toLocaleString("en-KE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const money = (n) => (n >= 0 ? "+" : "-") + Math.abs(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const pct = (n) => (n * 100).toFixed(0) + "%";
 
   let sb = null, session = null, myName = "Trader";
@@ -199,7 +199,7 @@
     const holdW = avg(wins.map((t) => t.closed - t.opened)), holdL = avg(losses.map((t) => t.closed - t.opened));
     const bySym = groupStats(tr, (t) => t.symbol, 3);
     const byStrat = groupStats(tr, (t) => (t.strategy || "").trim().toLowerCase(), 1);
-    const byHour = groupStats(tr, (t) => Number(new Intl.DateTimeFormat("en-GB", { timeZone: "Africa/Nairobi", hour: "numeric", hourCycle: "h23" }).format(new Date(t.opened))), 3);
+    const byHour = groupStats(tr, (t) => Number(new Intl.DateTimeFormat("en-GB", { hour: "numeric", hourCycle: "h23" }).format(new Date(t.opened))), 3);
     const bySide = groupStats(tr, (t) => t.side, 3);
     return { n, wins, losses, winRate, avgW, avgL, expectancy, pf, mdd, maxStreak, rs, withStop, withReason, rev, norm, afterLoss, afterWin, holdW, holdL, bySym, byStrat, byHour, bySide, total: sum(tr.map((t) => t.pnl)) };
   }
@@ -243,7 +243,7 @@
     }
     if (a.byHour.length >= 2) {
       const best = a.byHour[0], worst = a.byHour[a.byHour.length - 1];
-      if (worst.pnl < 0) add("info", `Your weakest time to open trades is around ${String(worst.k).padStart(2, "0")}:00 Nairobi time (${worst.n} trades, ${money(worst.pnl)}). Strongest: ${String(best.k).padStart(2, "0")}:00 (${best.n} trades, ${money(best.pnl)}).`);
+      if (worst.pnl < 0) add("info", `Your weakest time to open trades is around ${String(worst.k).padStart(2, "0")}:00 your time (${worst.n} trades, ${money(worst.pnl)}). Strongest: ${String(best.k).padStart(2, "0")}:00 (${best.n} trades, ${money(best.pnl)}).`);
     }
     if (!out.some((o) => o.kind === "warn") && a.n >= 10) add("good", "No major warning signs in this data. Keep journaling and keep the sample growing.");
     return out;
@@ -273,7 +273,7 @@
         <ul class="findings">${findings(a).map((f) => `<li class="finding ${f.kind}"><span class="ficon" aria-hidden="true">${icon[f.kind]}</span><span>${f.text}</span></li>`).join("")}</ul>
         ${a.bySym.length ? `<h3>By market</h3>${tableOf(a.bySym.map((x) => [esc(x.k), x.n, pct(x.win), `<span class="${x.pnl >= 0 ? "ok" : "err"}">${money(x.pnl)}</span>`]), ["Market", "Trades", "Win rate", "P/L"])}` : ""}
         ${a.byStrat.length ? `<h3>By strategy</h3>${tableOf(a.byStrat.map((x) => [esc(x.k), x.n, pct(x.win), `<span class="${x.pnl >= 0 ? "ok" : "err"}">${money(x.pnl)}</span>`]), ["Strategy", "Trades", "Win rate", "P/L"])}` : ""}
-        ${a.byHour.length ? `<h3>By hour opened (Nairobi time)</h3>${tableOf(a.byHour.sort((x, y) => x.k - y.k).map((x) => [String(x.k).padStart(2, "0") + ":00", x.n, pct(x.win), `<span class="${x.pnl >= 0 ? "ok" : "err"}">${money(x.pnl)}</span>`]), ["Hour", "Trades", "Win rate", "P/L"])}` : ""}
+        ${a.byHour.length ? `<h3>By hour opened (your local time)</h3>${tableOf(a.byHour.sort((x, y) => x.k - y.k).map((x) => [String(x.k).padStart(2, "0") + ":00", x.n, pct(x.win), `<span class="${x.pnl >= 0 ? "ok" : "err"}">${money(x.pnl)}</span>`]), ["Hour", "Trades", "Win rate", "P/L"])}` : ""}
         <p class="fine">Automated, rule-based review of your simulated trades. It spots patterns in your data. It does not predict results and is not financial advice.</p>`;
     } catch (_) {
       say(msg, "Couldn't load your trades. Check your connection and try again.");
@@ -291,8 +291,8 @@
     const first = guess - tzOffsetMs(tz, guess);
     return guess - tzOffsetMs(tz, first);
   }
-  const fmtEat = (ms) => new Date(ms).toLocaleString("en-KE", { timeZone: "Africa/Nairobi", weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hour12: false });
-  const fmtEatDay = (ms) => new Date(ms).toLocaleDateString("en-KE", { timeZone: "Africa/Nairobi", weekday: "short", day: "numeric", month: "short" });
+  const fmtEat = (ms) => new Date(ms).toLocaleString(undefined, { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hour12: false });
+  const fmtEatDay = (ms) => new Date(ms).toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" });
 
   // Event types. "tags" decide which markets they matter for.
   const GUIDE = [

@@ -36,14 +36,13 @@
     f.innerHTML = `
       <div class="foot-grid">
         <div class="foot-about"><div class="footer-brand"><img src="assets/mark.png" alt="" width="34" height="23"><span>Modefx</span></div>
-          <p>Practice trading with virtual money, keep a journal, learn the markets. Built in Kenya, paid for with M-Pesa.</p>
+          <p>Practice trading with virtual money, keep a journal, learn the markets. Learn at your own pace, from anywhere.</p>
           <p class="foot-live"><span class="live-dot">Practice feed running</span></p></div>
         <nav aria-label="Product"><h4>Product</h4><a href="markets.html">Markets</a><a href="lessons.html">Lessons</a><a href="pro.html">Pro</a><a href="golden.html">Golden</a><a href="plans.html">Plans</a></nav>
         <nav aria-label="Learn"><h4>Learn</h4><a href="insights.html">Insights</a><a href="glossary.html">Glossary</a><a href="lessons.html">Free lessons</a><a href="help.html">Help</a></nav>
         <nav aria-label="Company"><h4>Company</h4><a href="about.html">About</a><a href="help.html#contact">Contact</a>${mail}</nav>
         <nav aria-label="Legal"><h4>Legal</h4><a href="terms.html">Terms of use</a><a href="privacy.html">Privacy policy</a><a href="risk.html">Risk disclosure</a></nav>
       </div>
-      <p class="foot-risk"><strong>Risk warning.</strong> Modefx provides simulated trading and educational content only. It is not a broker, does not hold client funds and does not provide investment advice. Trading real markets involves significant risk and you can lose all the money you put in.</p>
       <p class="fine">&copy; ${new Date().getFullYear()} Modefx. All rights reserved.</p>`;
   }
 
@@ -80,7 +79,7 @@
       ["Live market status", [N, Y, Y, Y]],
       ["Challenges and XP", [N, Y, Y, Y]],
       ["22 advanced lessons", [N, N, Y, Y]],
-      ["Economic calendar (Nairobi time)", [N, N, Y, Y]],
+      ["Economic calendar (your local time)", [N, N, Y, Y]],
       ["Strategy playbook and checklists", [N, N, Y, Y]],
       ["Community board", [N, N, Y, Y]],
       ["Market predictions with levels", [N, N, N, Y]],

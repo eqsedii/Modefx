@@ -6,7 +6,7 @@
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const say = (el, text, kind = "") => { el.textContent = text; el.className = "msg " + kind; };
   const DP = { "EUR/USD": 4, "USD/KES": 2, "BTC/USD": 0, "XAU/USD": 2 };
-  const fmt = (sym, n) => Number(n).toLocaleString("en-KE", { minimumFractionDigits: DP[sym] ?? 2, maximumFractionDigits: DP[sym] ?? 2 });
+  const fmt = (sym, n) => Number(n).toLocaleString(undefined, { minimumFractionDigits: DP[sym] ?? 2, maximumFractionDigits: DP[sym] ?? 2 });
 
   let sb = null, session = null;
   async function getSB() {
@@ -21,10 +21,10 @@
   /* ---------- Tabs ---------- */
   const loaded = {};
   function showTab(name) {
-    if (!["predictions", "deriv"].includes(name)) name = "predictions";
+    if (!["predictions", "guide", "deriv"].includes(name)) name = "predictions";
     $$("[data-tab]").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tab === name)));
     $$("[data-panel]").forEach((p) => { p.hidden = p.dataset.panel !== name; });
-    if (!loaded[name]) { loaded[name] = true; (name === "predictions" ? initPredictions : initDeriv)(); }
+    if (!loaded[name]) { loaded[name] = true; if (name === "predictions") initPredictions(); else if (name === "deriv") initDeriv(); }
   }
   document.addEventListener("click", (e) => { const b = e.target.closest("[data-tab]"); if (b) { history.replaceState(null, "", "#" + b.dataset.tab); showTab(b.dataset.tab); } });
 
@@ -34,7 +34,7 @@
     const pts = vals.map((v, i) => `${(i / (vals.length - 1) * w).toFixed(1)},${(h - 3 - ((v - min) / r) * (h - 6)).toFixed(1)}`).join(" ");
     return `<svg class="spark" viewBox="0 0 ${w} ${h}" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="${up == null ? "#a6b3d0" : up ? "var(--ok)" : "var(--err)"}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
   }
-  function card(s) {
+  function card(s, featured) {
     const up = s.bias === "bullish" ? true : s.bias === "bearish" ? false : null;
     const label = { bullish: "Bullish", bearish: "Bearish", neutral: "Neutral" }[s.bias];
     const plan = s.plan ? `
@@ -44,7 +44,8 @@
         <div><dt>Target 1</dt><dd class="pos">${fmt(s.sym, s.plan.target1)}</dd></div>
         <div><dt>Target 2</dt><dd class="pos">${fmt(s.sym, s.plan.target2)}</dd></div>
       </dl>` : `<p class="fine">No levels: when the checks disagree, there is no edge to size a trade around.</p>`;
-    return `<article class="pred ${s.bias}">
+    return `<article class="pred ${s.bias}${featured ? " pred-featured" : ""}">
+      ${featured ? '<span class="top-read"><span aria-hidden="true">&#9733;</span> Top read today</span>' : ""}
       <header><div><h3>${esc(s.sym)}</h3><span class="fine">${fmt(s.sym, s.price)}</span></div>${spark(s.spark, up)}<span class="bias bias-${s.bias}">${label}</span></header>
       <div class="meter" role="img" aria-label="Signal strength ${s.strength} out of 100"><i style="width:${s.strength}%"></i><span>Strength ${s.strength}</span></div>
       <p class="pred-note">${esc(s.note)}</p>
@@ -60,9 +61,27 @@
       const r = await fetch((C.apiBase || "") + "/api/golden-signals", { headers: { Authorization: "Bearer " + session.access_token } });
       const j = await r.json();
       if (!r.ok) throw new Error(j.error || "Couldn't load predictions.");
-      if (!j.signals.length) { list.innerHTML = ""; say(msg, "No market data is available right now. Add a TWELVEDATA_API_KEY on Vercel for forex and gold, then reload."); meta.textContent = ""; return; }
-      list.innerHTML = j.signals.map(card).join("");
-      const t = new Date(j.asOf).toLocaleTimeString("en-KE", { hour: "2-digit", minute: "2-digit" });
+      if (!j.signals.length) { list.innerHTML = ""; say(msg, "No market data is available right now. Check back in a few minutes."); meta.textContent = ""; return; }
+      const sigs = [...j.signals].sort((a, b) => b.strength - a.strength);
+      const paintList = (f) => {
+        const show = sigs.filter((s) => f === "all" || s.bias === f);
+        list.innerHTML = show.length ? show.map((s, i) => card(s, f === "all" && i === 0 && s.strength >= 50)).join("") : '<p class="fine">No markets match this filter right now.</p>';
+      };
+      const count = (b) => sigs.filter((s) => s.bias === b).length, top = sigs[0];
+      $("#pred-summary").innerHTML = `
+        <div><b>${sigs.length}</b><span>markets read</span></div>
+        <div><b class="pos">${count("bullish")}</b><span>bullish</span></div>
+        <div><b class="neg">${count("bearish")}</b><span>bearish</span></div>
+        <div><b>${count("neutral")}</b><span>neutral</span></div>
+        <div class="sum-top"><b>${esc(top.sym)}</b><span>strongest, ${esc(top.strength)}</span></div>`;
+      const filt = $("#pred-filter"); filt.hidden = false;
+      filt.addEventListener("click", (e) => {
+        const b = e.target.closest("[data-filter]"); if (!b) return;
+        $$("[data-filter]", filt).forEach((x) => { x.classList.toggle("on", x === b); x.setAttribute("aria-pressed", String(x === b)); });
+        paintList(b.dataset.filter);
+      });
+      paintList("all");
+      const t = new Date(j.asOf).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
       meta.textContent = `Updated ${t}. Notes written by ${j.commentary === "claude" ? "an AI model" : "fixed templates"}.`;
       say(msg, "");
     } catch (e) { list.innerHTML = ""; meta.textContent = ""; say(msg, e.message || "Couldn't load predictions."); }
@@ -95,19 +114,22 @@
 
   /* ---------- Gate ---------- */
   (async () => {
-    const gate = $("#gold-gate");
+    const gate = $("#gold-gate"), heroMeta = $("#gold-hero-meta");
+    const gp = ((C.tiers || []).find((t) => t.id === "golden") || {}).price;
+    if (gp) $("#gold-price-line").textContent = `KSh ${Number(gp).toLocaleString()}, one time, unlocked forever. Requires Pro.`;
     const client = await getSB();
     if (!client) { gate.textContent = "Sign-in isn't connected yet. Add your Supabase keys in config.js."; return; }
     const { data } = await client.auth.getSession();
     session = data.session;
-    if (!session) { gate.innerHTML = `Sign in and get Golden to unlock this area. <a class="link" href="account.html">Sign in</a>`; $("#gold-teaser").hidden = false; return; }
+    if (!session) { gate.innerHTML = `Sign in and get Golden to unlock this area. <a class="link" href="account.html">Sign in</a>`; heroMeta.innerHTML = '<span class="hero-chip">Locked</span>'; $("#gold-teaser").hidden = false; return; }
     let tiers = [];
     try { const r = await client.from("entitlements").select("tier, expires_at"); tiers = r.data || []; } catch (_) {}
     if (!isUnlocked(tiers, "golden")) {
       gate.innerHTML = isUnlocked(tiers, "pro") ? `Get Golden to unlock this area, forever. <a class="link" href="plans.html">View plans</a>` : `Golden needs Pro first. <a class="link" href="plans.html">View plans</a>`;
-      $("#gold-teaser").hidden = false; return;
+      heroMeta.innerHTML = '<span class="hero-chip">Locked</span>'; $("#gold-teaser").hidden = false; return;
     }
     gate.textContent = ""; $("#gold-app").hidden = false;
+    heroMeta.innerHTML = '<span class="hero-chip member"><span aria-hidden="true">&#9733;</span> Golden member</span><span class="hero-chip">Unlocked forever</span><span class="hero-chip">Predictions &middot; Broker link</span>';
     showTab(location.hash.slice(1));
   })();
 })();

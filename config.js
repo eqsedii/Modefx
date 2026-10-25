@@ -13,6 +13,14 @@ window.MODEFX_CONFIG = {
   brokerName: "Deriv",
   brokerUrl: "https://deriv.com",
 
+  // Payment methods shown at checkout. Only "mpesa" is wired to the server today.
+  // When you add cards or other international methods, add them here and handle them in api/.
+  payments: [
+    { id: "mpesa", name: "M-Pesa", live: true },
+    { id: "card", name: "Card", live: false },
+    { id: "other", name: "Other", live: false }
+  ],
+
   // Display copy only. Amounts and the unlock order are enforced on the server in api/_plans.js.
   // Keep the tier ids ("id") and prices in sync with that file.
   // Each tier requires the one before it: growth needs starter, pro needs growth, golden needs pro.
@@ -45,7 +53,7 @@ window.MODEFX_CONFIG = {
         "Everything in Growth, unlocked forever",
         "22 advanced lessons with calculators",
         "Market explainers and an automated journal review",
-        "Economic calendar in Nairobi time, with plain-language notes",
+        "Economic calendar in your local time, with plain-language notes",
         "Strategy playbook with pre-trade checklists",
         "Community board: post and comment"
       ]

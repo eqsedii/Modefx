@@ -31,7 +31,7 @@
 
   async function loadBalance() {
     const { data, error } = await sb.rpc("ensure_trading_account");
-    if (!error) $("#pg-balance").textContent = "KSh " + Number(data).toLocaleString("en-KE", { maximumFractionDigits: 2 });
+    if (!error) $("#pg-balance").textContent = "$" + Number(data).toLocaleString(undefined, { maximumFractionDigits: 2 });
   }
 
   async function load() {

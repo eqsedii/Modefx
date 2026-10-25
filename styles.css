@@ -653,3 +653,94 @@ body { opacity: 0; transition: opacity .5s ease; } body.ready, .no-js body { opa
 @media (min-width: 940px) { .hero-live { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); } }
 .hero-live::before, .hero-live::after { max-width: 100vw; }
 .page { overflow-x: clip; }
+
+/* =====================================================================
+   Lesson levels, Golden presence, payment methods
+   ===================================================================== */
+.gold-star { color: var(--gold); } .gold-star.big { font-size: 1.7rem; line-height: 1; }
+
+/* Level switcher (lessons, growth, pro, golden) */
+.level-nav { display: grid; grid-template-columns: repeat(2, 1fr); gap: .5rem; margin: 0 0 1.4rem; }
+@media (min-width: 720px) { .level-nav { grid-template-columns: repeat(4, 1fr); } }
+.lv { display: grid; gap: .1rem; padding: .7rem .85rem; border: 1px solid var(--line); border-radius: 12px; background: rgba(3, 6, 15, .55); text-decoration: none; transition: border-color .2s, transform .2s, background .2s; }
+.lv:hover { border-color: var(--line-strong); transform: translateY(-2px); }
+.lv small { color: var(--mute); font-size: .72rem; letter-spacing: .04em; text-transform: uppercase; }
+.lv strong { font: 600 1rem var(--display); } .lv span { color: var(--mute); font-size: .8rem; }
+.lv[aria-current="page"] { border-color: var(--cyan); background: rgba(30, 107, 255, .2); box-shadow: 0 0 16px rgba(30, 107, 255, .3); }
+.lv.is-open strong::after { content: "\2713"; color: var(--ok); margin-left: .4rem; font-size: .85rem; }
+.lv-lock { font-size: .75rem; opacity: .7; }
+.lv-gold { border-color: rgba(233, 185, 73, .5); background: linear-gradient(160deg, rgba(233, 185, 73, .14), rgba(3, 6, 15, .55) 70%); }
+.lv-gold strong { color: var(--gold); } .lv-gold:hover { border-color: var(--gold); }
+.lv-gold[aria-current="page"] { border-color: var(--gold); background: rgba(233, 185, 73, .2); box-shadow: 0 0 18px rgba(233, 185, 73, .35); }
+
+/* Level cards on the lessons hub */
+.level-cards { display: grid; gap: 1rem; margin: 0 0 2.2rem; }
+@media (min-width: 720px) { .level-cards { grid-template-columns: repeat(2, 1fr); } }
+.level-card { display: grid; gap: .55rem; align-content: start; padding: 1.25rem; border: 1px solid var(--line); border-radius: 16px; background: rgba(3, 6, 15, .6); }
+.level-card h3 { font-size: 1.35rem; } .level-card p { color: var(--mute); font-size: .94rem; margin: 0; }
+.level-card .btn { justify-self: start; margin-top: .4rem; }
+.level-card.is-open { border-color: rgba(61, 220, 151, .45); }
+.level-top { display: flex; justify-content: space-between; align-items: center; }
+.level-n { color: var(--cyan); font: 600 .78rem var(--body); letter-spacing: .06em; text-transform: uppercase; }
+.level-count { color: var(--silver) !important; font-weight: 600; }
+.level-chip { font: 600 .72rem var(--body); padding: .15rem .55rem; border-radius: 999px; border: 1px solid var(--line); color: var(--mute); }
+.chip-open { color: var(--ok); border-color: rgba(61, 220, 151, .5); } .chip-buy { color: var(--cyan); border-color: var(--line-strong); }
+.level-gold { border-color: rgba(233, 185, 73, .6); background: radial-gradient(500px circle at 100% 0, rgba(233, 185, 73, .2), transparent 60%), rgba(3, 6, 15, .65); box-shadow: 0 0 30px rgba(233, 185, 73, .12); }
+.level-gold .level-n, .level-gold h3 { color: var(--gold); } .level-gold .chip-open { color: var(--gold); border-color: rgba(233, 185, 73, .6); }
+.level-gold .btn-primary { background: linear-gradient(180deg, #f2c75c, var(--gold-deep)); color: #1a1202; box-shadow: 0 0 0 1px rgba(233, 185, 73, .5), 0 0 22px rgba(233, 185, 73, .35); }
+.level-gold .btn-ghost { border-color: rgba(233, 185, 73, .6); color: var(--gold); }
+.level-section { display: grid; gap: .6rem; margin-bottom: 2rem; scroll-margin-top: 5rem; }
+.level-head { display: grid; gap: .4rem; justify-items: start; margin-bottom: .4rem; }
+.next-level { display: grid; gap: .6rem; justify-items: start; }
+
+/* Golden presence across the site */
+.nav-gold { display: inline-flex; align-items: center; gap: .3rem; }
+.nav-gold.is-member { text-shadow: 0 0 12px rgba(233, 185, 73, .65); }
+.nav-gold.is-member .gold-star { animation: starpulse 2.6s ease-in-out infinite; }
+@keyframes starpulse { 50% { transform: scale(1.25); filter: drop-shadow(0 0 5px rgba(233, 185, 73, .9)); } }
+.gold-member { display: flex; align-items: center; gap: .9rem; padding: 1rem 1.1rem; margin: 0 0 1rem; border: 1px solid rgba(233, 185, 73, .6); border-radius: 14px; text-decoration: none; background: linear-gradient(120deg, rgba(233, 185, 73, .22), rgba(233, 185, 73, .05)); box-shadow: 0 0 24px rgba(233, 185, 73, .18); }
+.gold-member strong { display: block; font: 600 1.05rem var(--display); color: var(--gold); } .gold-member small { color: var(--mute); }
+.gold-member .gm-go { margin-left: auto; color: var(--gold); font-size: 1.2rem; }
+.gold-strip { display: flex; align-items: center; gap: .7rem; padding: .7rem 1rem; margin-bottom: 1rem; border: 1px solid rgba(233, 185, 73, .5); border-radius: 12px; text-decoration: none; background: linear-gradient(100deg, rgba(233, 185, 73, .18), rgba(233, 185, 73, .04)); font-size: .92rem; }
+.gold-strip strong { color: var(--gold); } .gold-strip > span:last-child { margin-left: auto; color: var(--gold); }
+
+/* Golden plan card */
+.plan-gold { position: relative; padding: 1.6rem 1.2rem !important; margin-top: 1.2rem; border: 1px solid rgba(233, 185, 73, .6) !important; border-radius: 16px; background: radial-gradient(520px circle at 100% 0, rgba(233, 185, 73, .18), transparent 60%); box-shadow: 0 0 34px rgba(233, 185, 73, .14); }
+.plan-gold .plan-name { color: var(--gold); display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.plan-gold li::before { border-color: var(--gold) !important; }
+.plan-gold .btn-primary { background: linear-gradient(180deg, #f2c75c, var(--gold-deep)); color: #1a1202; box-shadow: 0 0 0 1px rgba(233, 185, 73, .5), 0 0 22px rgba(233, 185, 73, .35); }
+.plan-ribbon { font: 600 .68rem var(--body); letter-spacing: .05em; text-transform: uppercase; color: #1a1202; background: var(--gold); padding: .15rem .5rem; border-radius: 999px; }
+
+/* Golden page */
+.gold-hero { display: grid; gap: .8rem; justify-items: start; padding: 1.6rem 1.3rem; margin-bottom: 1.2rem; border: 1px solid rgba(233, 185, 73, .5); border-radius: 18px; background: radial-gradient(700px circle at 85% -10%, rgba(233, 185, 73, .28), transparent 60%), radial-gradient(500px circle at 0 110%, rgba(30, 107, 255, .18), transparent 60%), rgba(3, 6, 15, .7); box-shadow: 0 0 40px rgba(233, 185, 73, .12); }
+.gold-hero h1 { background: linear-gradient(100deg, #fff3cf, var(--gold) 55%, #fff3cf); -webkit-background-clip: text; background-clip: text; color: transparent; font-size: clamp(2rem, 7vw, 3rem); }
+.gold-hero p { color: var(--silver); max-width: 56ch; margin: 0; }
+.gold-hero-meta { display: flex; flex-wrap: wrap; gap: .5rem; }
+.hero-chip { font: 600 .78rem var(--body); padding: .25rem .7rem; border-radius: 999px; border: 1px solid var(--line-strong); color: var(--mute); }
+.hero-chip.member { color: #1a1202; background: linear-gradient(180deg, #f2c75c, var(--gold-deep)); border-color: transparent; }
+.gold-perks { display: grid; gap: .9rem; margin-bottom: 1.2rem; }
+@media (min-width: 760px) { .gold-perks { grid-template-columns: repeat(3, 1fr); } }
+.gold-perks article { display: grid; gap: .45rem; align-content: start; padding: 1.15rem; border: 1px solid rgba(233, 185, 73, .35); border-radius: 14px; background: rgba(3, 6, 15, .6); }
+.gold-perks h3 { font-size: 1.05rem; color: var(--gold); } .gold-perks p { color: var(--mute); font-size: .92rem; margin: 0; }
+.perk-ic { width: 2.2rem; height: 2.2rem; display: grid; place-items: center; border-radius: 10px; color: var(--gold); background: var(--gold-soft); font-size: 1.1rem; }
+.gold-sheet { border-color: rgba(233, 185, 73, .35); }
+.sample-list { opacity: .85; pointer-events: none; user-select: none; }
+.gold-cta { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; border-color: rgba(233, 185, 73, .55); background: linear-gradient(120deg, rgba(233, 185, 73, .16), rgba(3, 6, 15, .6)); }
+.gold-summary { display: grid; grid-template-columns: repeat(2, 1fr); gap: .6rem; margin-bottom: 1rem; }
+@media (min-width: 720px) { .gold-summary { grid-template-columns: repeat(5, 1fr); } }
+.gold-summary > div { display: grid; padding: .8rem .9rem; border: 1px solid rgba(233, 185, 73, .35); border-radius: 12px; background: rgba(3, 6, 15, .6); }
+.gold-summary b { font: 700 1.5rem var(--display); } .gold-summary span { color: var(--mute); font-size: .78rem; }
+.gold-summary .sum-top b { color: var(--gold); font-size: 1.2rem; }
+.chips { display: flex; flex-wrap: wrap; gap: .4rem; margin: .6rem 0; }
+.chip { font: 600 .82rem var(--body); color: var(--mute); background: rgba(3, 6, 15, .6); border: 1px solid var(--line); border-radius: 999px; padding: .35rem .85rem; cursor: pointer; }
+.chip.on { color: #1a1202; background: var(--gold); border-color: var(--gold); }
+@media (min-width: 760px) { .pred-featured { grid-column: 1 / -1; } }
+.pred-featured { border-color: rgba(233, 185, 73, .65) !important; box-shadow: 0 0 28px rgba(233, 185, 73, .16); }
+.top-read { justify-self: start; font: 600 .74rem var(--body); letter-spacing: .05em; text-transform: uppercase; color: #1a1202; background: var(--gold); padding: .15rem .6rem; border-radius: 999px; }
+.guide-steps { display: grid; gap: .8rem; padding-left: 1.2rem; margin: 1rem 0; } .guide-steps li::marker { color: var(--gold); font-weight: 700; }
+
+/* Payment methods */
+.pay-methods { display: flex; gap: .4rem; margin: .4rem 0 1rem; }
+.pay-method { font: 600 .85rem var(--body); color: var(--mute); background: rgba(3, 6, 15, .6); border: 1px solid var(--line); border-radius: 10px; padding: .5rem .9rem; }
+.pay-method.on { color: #fff; border-color: var(--cyan); background: rgba(30, 107, 255, .3); }
+.pay-method:disabled { opacity: .5; cursor: not-allowed; } .pay-method small { font-size: .65rem; opacity: .8; }

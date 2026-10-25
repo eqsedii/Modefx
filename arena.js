@@ -7,7 +7,7 @@
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const body = $("#arena-body");
-  const fmtKES = (n) => "KSh " + Number(n).toLocaleString("en-KE", { maximumFractionDigits: 2 });
+  const fmtKES = (n) => "$" + Number(n).toLocaleString(undefined, { maximumFractionDigits: 2 });
   const msg = (el, text, kind = "") => { el.textContent = text; el.className = "msg " + kind; };
 
   // Shared with instrument.html via market-engine.js, so prices always match across pages.

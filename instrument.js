@@ -140,7 +140,7 @@
     const { data, error } = await sb.rpc("ensure_trading_account");
     if (!error) {
       lastBalance = Number(data);
-      $("#ins-balance").textContent = "KSh " + lastBalance.toLocaleString("en-KE", { maximumFractionDigits: 2 });
+      $("#ins-balance").textContent = "$" + lastBalance.toLocaleString(undefined, { maximumFractionDigits: 2 });
       if (!$("#tools-panel").hidden) updateCalc();
     }
   }
@@ -279,7 +279,7 @@
     if (!(risk > 0) || !(stopDist > 0)) { out.textContent = "Enter both values to see a suggested quantity."; $("#calc-use").dataset.qty = ""; return; }
     const riskAmount = lastBalance * (risk / 100);
     const qty = riskAmount / stopDist;
-    out.textContent = `Risking ${risk}% of KSh ${lastBalance.toLocaleString("en-KE")} (≈ KSh ${riskAmount.toFixed(2)}) over a ${stopDist} stop suggests a quantity of about ${qty.toFixed(4)} units.`;
+    out.textContent = `Risking ${risk}% of $${lastBalance.toLocaleString(undefined)} (≈ $${riskAmount.toFixed(2)}) over a ${stopDist} stop suggests a quantity of about ${qty.toFixed(4)} units.`;
     $("#calc-use").dataset.qty = qty.toFixed(4);
   }
   $("#calc-risk").addEventListener("input", updateCalc);

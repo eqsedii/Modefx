@@ -75,7 +75,7 @@ A simple fix: before sizing a trade, check that instrument's own typical daily r
           const out = $("#demo-vol-out", card);
           if (!(hi > lo)) { out.textContent = "High must be greater than low."; return; }
           const range = hi - lo;
-          out.innerHTML = `Today's range so far: <span>${range.toLocaleString("en-KE", { maximumFractionDigits: 2 })}</span>. A stop placed only a tiny fraction of that away is sitting inside normal daily noise; most traders look to stops that are a meaningful chunk of this range, then size their quantity so that distance still only risks their fixed 1–2% from lesson 3.</p>`;
+          out.innerHTML = `Today's range so far: <span>${range.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>. A stop placed only a tiny fraction of that away is sitting inside normal daily noise; most traders look to stops that are a meaningful chunk of this range, then size their quantity so that distance still only risks their fixed 1–2% from lesson 3.</p>`;
         };
         ["demo-vol-hi", "demo-vol-lo"].forEach((id) => $("#" + id, card).addEventListener("input", update));
         update();

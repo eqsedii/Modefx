@@ -30,7 +30,7 @@
     $("#pg-list").innerHTML = trades.map((t) => {
       const s = M.bySym(t.symbol);
       const cls = t.pnl >= 0 ? "ok" : "err";
-      const when = new Date(t.closed_at).toLocaleString("en-KE", { dateStyle: "medium", timeStyle: "short" });
+      const when = new Date(t.closed_at).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
       const notes = [t.reason_in && `In: ${t.reason_in}`, t.reason_out && `Out: ${t.reason_out}`, t.strategy && `Strategy: ${t.strategy}`, t.note].filter(Boolean).join(" · ");
       return `<tr>
         <td>${when}</td><td>${t.symbol}</td><td>${t.side}</td><td>${t.qty}</td>

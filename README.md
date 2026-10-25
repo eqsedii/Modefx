@@ -1,6 +1,6 @@
 # Modefx
 
-Simulated trading and learning platform for Kenya. Practice with virtual money, keep a journal, learn the markets.
+Simulated trading and learning platform for traders worldwide. Practice with virtual money, keep a journal, learn the markets, from anywhere in the world.
 Modefx is **not** a broker: it holds no client money and places no real trades. Real-money trading is a link out to Deriv.
 
 ## Pricing: a required ladder, not separate plans
@@ -16,6 +16,23 @@ Rules, enforced on the server (never trust the browser for money):
 - A tier can only be bought once its prerequisite is owned. You can't skip ahead.
 - Starter locks 7 days after purchase **unless** Growth has been bought — M-Pesa can't auto-charge, so there is no silent renewal; the site just shows a "get Growth to unlock again" prompt.
 - Once Growth is bought, both Starter and Growth stay unlocked forever. Same for Pro and Golden — every tier past Starter is permanent from the moment it's bought.
+
+## Lessons are split into four levels
+
+| Level | Page | Content |
+|---|---|---|
+| 1 Starter | `lessons.html` | 10 foundation lessons |
+| 2 Growth | `growth.html` | 6 deeper lessons |
+| 3 Pro | `pro.html#lessons` | 22 advanced lessons by category, plus tools |
+| 4 Golden | `golden.html` | Predictions desk and broker link |
+
+`levels.js` draws the level switcher and level cards, and gives Golden members a star in the nav, an account card and a strip on Markets.
+
+## Going international
+
+- Copy, time zones (sessions, calendar, journal hours) and number formats now follow the visitor's own locale.
+- Practice balances are shown in `$`. Plan prices are still billed in KES through M-Pesa.
+- `config.js` has a `payments` list (M-Pesa live; Card and Other shown as "soon"). To add cards, add the method in `config.js`, add a server route in `api/`, and handle it in the checkout code in `app.js`. Prices are set in `api/_plans.js` and `config.js`, so add a currency there at the same time.
 
 ## What's in this drop
 

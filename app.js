@@ -3,7 +3,7 @@
   const C = window.MODEFX_CONFIG || {};
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-  const fmtKES = (n) => "KSh " + Number(n).toLocaleString("en-KE");
+  const fmtKES = (n) => "KSh " + Number(n).toLocaleString(undefined);
   const ACCOUNT_URL = new URL("account.html", location.href).href;
 
   /* ---------------- Loader (short video on every button click) ---------------- */
@@ -167,11 +167,18 @@
   const wasEverBought = (tierId) => (myEntitlements || []).some((x) => x.tier === tierId);
   const daysLeft = (iso) => Math.max(0, Math.ceil((new Date(iso) - new Date()) / 86400000));
 
+  // Shared with levels.js and other scripts: window.MFXEnt.isUnlocked("golden"), and the "mfx:ent" event.
+  function publishEntitlements() {
+    window.MFXEnt = { list: myEntitlements, isUnlocked, wasEverBought, signedIn: !!session };
+    ["starter", "growth", "pro", "golden"].forEach((id) => document.body.classList.toggle("has-" + id, isUnlocked(id)));
+    document.dispatchEvent(new CustomEvent("mfx:ent", { detail: window.MFXEnt }));
+  }
   async function loadEntitlements() {
     try {
       const { data } = await sb.from("entitlements").select("tier, expires_at");
       myEntitlements = data || [];
     } catch (_) { myEntitlements = []; }
+    publishEntitlements();
   }
 
   /* ---------------- Plans (the tier ladder) ---------------- */
@@ -217,6 +224,7 @@
       t.features.forEach((f) => { const li = document.createElement("li"); li.textContent = f; $("ul", art).append(li); });
       $(".amt", art).textContent = fmtKES(t.price);
       $(".dur", art).textContent = t.id === "starter" ? "unlocks now" : "one time";
+      if (t.id === "golden") { art.classList.add("plan-gold"); const n = $(".plan-name", art); n.innerHTML = '<span class="gold-star" aria-hidden="true">&#9733;</span> Golden <span class="plan-ribbon">Most complete</span>'; }
       $(".btn", art).textContent = btnLabel;
       planList.append(art);
     });
@@ -267,6 +275,7 @@
     } else {
       myEntitlements = null;
       renderTiers();
+      publishEntitlements();
     }
     if (!authForm) return;
     const recovering = !$("#recovery-form").hidden;
@@ -304,7 +313,7 @@
       $("#tab-signup").setAttribute("aria-selected", String(up));
       $("#auth-submit").textContent = up ? "Create account" : "Sign in";
       $("#password").autocomplete = up ? "new-password" : "current-password";
-      $("#consent-row").hidden = !up;
+      $("#terms-note").hidden = !up;
       $("#forgot").hidden = up;
       msg(authMsg, "");
     }
@@ -328,7 +337,6 @@
       const email = $("#email").value.trim(), password = $("#password").value;
       if (!validEmail(email)) return msg(authMsg, "Enter a valid email address.");
       if (password.length < 8) return msg(authMsg, "Your password needs at least 8 characters.");
-      if (mode === "signup" && !$("#consent").checked) return msg(authMsg, "Please confirm you understand Modefx is simulated practice.");
       msg(authMsg, "");
       const btn = $("#auth-submit"); btn.disabled = true;
       try {
@@ -405,7 +413,7 @@
     $("#co-form").addEventListener("submit", async (e) => {
       e.preventDefault();
       const phone = normalizePhone($("#co-phone").value);
-      if (!phone) return msg(coMsg, "Enter a valid Safaricom number, like 0712 345 678.");
+      if (!phone) return msg(coMsg, "Enter a valid M-Pesa number, like 0712 345 678 or +254 712 345 678.");
       coPay.disabled = true; msg(coMsg, "");
       try {
         const res = await Loader.run(fetch((C.apiBase || "") + "/api/payhero-stk", {

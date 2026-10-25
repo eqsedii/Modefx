@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Plans | Modefx</title>
-  <meta name="description" content="Modefx plans from KSh 99. Pay with M-Pesa. No auto-renewal. No profit guarantees.">
+  <meta name="description" content="Modefx plans from KSh 99. One-time payments, no auto-renewal. Unlock Starter, Growth, Pro and Golden.">
   <meta name="theme-color" content="#03060F">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png">
   <link rel="apple-touch-icon" href="assets/icon-180.png">
@@ -32,7 +32,7 @@
   <main class="page">
     <div class="page-head">
       <h1>Plans</h1>
-      <p>Pay with M-Pesa. Modefx unlocks in steps: each tier below adds more features on top of the one before it, and once unlocked, features stay unlocked. No plan makes trading profitable.</p>
+      <p>One-time payments, no subscriptions. Modefx unlocks in steps: each tier below adds more features on top of the one before it, and once unlocked, features stay unlocked.</p>
     </div>
     <section class="sheet">
       <div class="plans" id="plan-list"></div>
@@ -41,13 +41,14 @@
   </main>
   <footer class="footer">
     <div class="footer-brand"><img src="assets/mark.png" alt="" width="34" height="23"><span>Modefx</span></div>
-    <p>Modefx provides simulated trading and educational content only. It is not a broker, does not hold client funds and does not provide investment advice. Trading real markets involves significant risk of loss.</p>
+    <p>Modefx is an education and practice platform. It is not a broker and does not hold client funds.</p>
     <p class="fine">&copy; <span id="year"></span> Modefx</p>
   </footer>
   <dialog id="checkout" aria-labelledby="co-title">
     <form method="dialog" class="co-close"><button type="submit" aria-label="Close" data-quiet>&times;</button></form>
-    <h2 id="co-title">Pay with M-Pesa</h2>
+    <h2 id="co-title">Checkout</h2>
     <p class="co-summary" id="co-summary"></p>
+    <div class="pay-methods" id="pay-methods" role="group" aria-label="Payment method"><button type="button" class="pay-method on" aria-pressed="true" data-quiet>M-Pesa</button><button type="button" class="pay-method" disabled title="Coming soon">Card <small>soon</small></button><button type="button" class="pay-method" disabled title="Coming soon">Other <small>soon</small></button></div>
     <form id="co-form" novalidate>
       <label for="co-phone">M-Pesa phone number</label>
       <input id="co-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="07XX XXX XXX" required>
@@ -61,6 +62,7 @@
   <script src="market-engine.js" defer></script>
   <script src="app.js" defer></script>
   <script src="effects.js" defer></script>
+  <script src="levels.js" defer></script>
   <script src="site.js" defer></script>
 </body>
 </html>

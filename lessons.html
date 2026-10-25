@@ -29,26 +29,28 @@
 
   <main class="page">
     <div class="page-head">
-      <span class="pill">Starter</span>
-      <h1>Lessons</h1>
-      <p>Ten short lessons, each tied to a tool you already have in the Trading Arena. Read one, then go try it for real with virtual money.</p>
+      <h1>Learn level by level</h1>
+      <p>Four levels, each building on the one before. Pick up where you are, and every lesson ties to a tool you can try with virtual money.</p>
     </div>
 
-    <p class="fine" id="lessons-gate"></p>
-    <p class="fine" id="lessons-progress"></p>
+    <nav class="level-nav" id="level-nav" aria-label="Lesson levels"></nav>
+    <section class="level-cards" id="level-cards" aria-label="All levels"></section>
 
-    <div class="lessons" id="lessons-list" hidden></div>
-
-    <section class="sheet notice">
-      <h2>Ready to go deeper?</h2>
-      <p>Growth members get six more lessons: multi-timeframe analysis, the real math of risk of ruin, volatility-aware sizing, reversal candlesticks, writing a trading plan, and how to actually read your own journal.</p>
-      <a class="btn btn-ghost" href="growth.html">Growth lessons &rarr;</a>
+    <section class="level-section" id="starter">
+      <div class="level-head">
+        <span class="pill">Level 1</span>
+        <h2>Starter lessons</h2>
+        <p class="sheet-sub">Ten short lessons on the habits and tools every trader needs first.</p>
+      </div>
+      <p class="fine" id="lessons-gate"></p>
+      <p class="fine" id="lessons-progress"></p>
+      <div class="lessons" id="lessons-list" hidden></div>
     </section>
 
-    <section class="sheet notice">
-      <h2>Modefx Pro</h2>
-      <p>Pro members get 22 advanced lessons with calculators, a journal reviewer that finds your habits, a plain-language economic calendar in Nairobi time, a strategy playbook with pre-trade checklists, and a community board.</p>
-      <a class="btn btn-ghost" href="pro.html">Open Pro &rarr;</a>
+    <section class="sheet next-level">
+      <h2>Next: Level 2, Growth</h2>
+      <p>Six deeper lessons on multi-timeframe reads, the math of risk, sizing for volatility, reversal candles, your trading plan and reading your own journal.</p>
+      <a class="btn btn-ghost" href="growth.html">Open Growth lessons &rarr;</a>
     </section>
   </main>
 
@@ -67,6 +69,7 @@
   <script src="app.js" defer></script>
   <script src="lessons.js" defer></script>
   <script src="effects.js" defer></script>
+  <script src="levels.js" defer></script>
   <script src="site.js" defer></script>
 </body>
 </html>

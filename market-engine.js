@@ -63,7 +63,7 @@ window.MFXMarket = (() => {
     return simulatedPriceAt(s, t) + offset;
   }
   const priceOf = (s) => priceAt(s, Date.now());
-  const fmtPrice = (s, p) => p.toLocaleString("en-KE", { minimumFractionDigits: s.dp, maximumFractionDigits: s.dp });
+  const fmtPrice = (s, p) => p.toLocaleString(undefined, { minimumFractionDigits: s.dp, maximumFractionDigits: s.dp });
   const bySym = (sym) => SYMS.find((x) => x.sym === sym);
 
   // Deterministic "random" (same wick shape for everyone looking at the same candle).

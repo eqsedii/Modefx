@@ -27,40 +27,89 @@
   </header>
 
   <main class="page">
-    <div class="page-head">
-      <span class="pill gold-pill">Golden</span>
+    <section class="gold-hero">
+      <span class="pill gold-pill"><span aria-hidden="true">&#9733;</span> Golden &middot; Level 4</span>
       <h1>Modefx Golden</h1>
-      <p>Predictions with levels, calculated from real candles, and a saved link to your Deriv account. Predictions are educational. Nothing here is advice and no outcome is guaranteed.</p>
-    </div>
+      <p>Market predictions with stop and target levels, built from real candles, the reasoning behind every one, and a link straight to your broker.</p>
+      <div class="gold-hero-meta" id="gold-hero-meta"></div>
+    </section>
+
+    <nav class="level-nav" id="level-nav" aria-label="Lesson levels"></nav>
 
     <p class="fine" id="gold-gate"></p>
 
-    <section class="sheet notice" id="gold-teaser" hidden>
-      <h2>What's inside Golden</h2>
-      <ul class="plain-list">
-        <li><strong>Predictions:</strong> each market gets a bullish, bearish or neutral reading from trend, momentum and volatility, with a stop and two targets sized to current volatility.</li>
-        <li><strong>Reasons you can check:</strong> every reading lists the indicators behind it, so you learn to read the chart yourself.</li>
-        <li><strong>Deriv link:</strong> save your Deriv login ID next to your Modefx profile and jump straight to your broker when you are ready for real money.</li>
-      </ul>
-      <a class="btn btn-primary" href="plans.html">View plans</a>
-    </section>
+    <div id="gold-teaser" hidden>
+      <section class="gold-perks" aria-label="What Golden includes">
+        <article><span class="perk-ic" aria-hidden="true">&#9733;</span><h3>Predictions with levels</h3><p>Each market gets a bullish, bearish or neutral reading from trend, momentum and volatility, with a stop and two targets sized to current volatility.</p></article>
+        <article><span class="perk-ic" aria-hidden="true">&#9776;</span><h3>Reasons you can check</h3><p>Every reading lists the indicators behind it, so you learn to read the chart yourself instead of following blindly.</p></article>
+        <article><span class="perk-ic" aria-hidden="true">&#8599;</span><h3>Your broker, one tap away</h3><p>Save your Deriv login ID next to your Modefx profile and jump straight to your account when you are ready.</p></article>
+      </section>
+
+      <section class="sheet gold-sheet">
+        <div class="gold-head"><h2>Sample preview</h2><span class="fine">Example only, not a live reading</span></div>
+        <div class="pred-list sample-list" aria-hidden="true">
+          <article class="pred bullish">
+            <header><div><h3>EUR/USD</h3><span class="fine">1.0842</span></div><span class="bias bias-bullish">Bullish</span></header>
+            <div class="meter"><i style="width:78%"></i><span>Strength 78</span></div>
+            <p class="pred-note">Price is above its averages and momentum is rising while volatility is calm.</p>
+            <dl class="levels"><div><dt>Practice buy</dt><dd>1.0842</dd></div><div><dt>Stop</dt><dd class="neg">1.0791</dd></div><div><dt>Target 1</dt><dd class="pos">1.0893</dd></div><div><dt>Target 2</dt><dd class="pos">1.0944</dd></div></dl>
+          </article>
+          <article class="pred bearish">
+            <header><div><h3>XAU/USD</h3><span class="fine">2,318.40</span></div><span class="bias bias-bearish">Bearish</span></header>
+            <div class="meter"><i style="width:64%"></i><span>Strength 64</span></div>
+            <p class="pred-note">Price slipped under its trend average and recent bounces are fading.</p>
+            <dl class="levels"><div><dt>Practice sell</dt><dd>2,318.40</dd></div><div><dt>Stop</dt><dd class="neg">2,341.10</dd></div><div><dt>Target 1</dt><dd class="pos">2,295.70</dd></div><div><dt>Target 2</dt><dd class="pos">2,273.00</dd></div></dl>
+          </article>
+        </div>
+      </section>
+
+      <section class="sheet gold-cta">
+        <div>
+          <h2>Unlock Golden</h2>
+          <p class="sheet-sub" id="gold-price-line">One-time payment, unlocked forever. Requires Pro.</p>
+        </div>
+        <a class="btn btn-primary" href="plans.html">View plans</a>
+      </section>
+    </div>
 
     <div id="gold-app" hidden>
       <div class="subtabs" role="tablist" aria-label="Golden sections">
         <button type="button" role="tab" data-tab="predictions" aria-selected="true">Predictions</button>
+        <button type="button" role="tab" data-tab="guide" aria-selected="false">How to read</button>
         <button type="button" role="tab" data-tab="deriv" aria-selected="false">Deriv account</button>
       </div>
 
       <section data-panel="predictions">
-        <div class="sheet">
+        <div class="gold-summary" id="pred-summary" aria-live="polite"></div>
+        <div class="sheet gold-sheet">
           <div class="gold-head">
-            <h2>Market predictions</h2>
+            <h2>Today&rsquo;s predictions</h2>
             <span class="fine" id="pred-meta">Loading</span>
+          </div>
+          <div class="chips" id="pred-filter" role="group" aria-label="Filter predictions" hidden>
+            <button type="button" class="chip on" data-filter="all" aria-pressed="true">All</button>
+            <button type="button" class="chip" data-filter="bullish" aria-pressed="false">Bullish</button>
+            <button type="button" class="chip" data-filter="bearish" aria-pressed="false">Bearish</button>
+            <button type="button" class="chip" data-filter="neutral" aria-pressed="false">Neutral</button>
           </div>
           <p class="sheet-sub">Strength shows how many of the four checks agree. It is not the chance of a trade winning. Price data refreshes hourly.</p>
           <div id="pred-list" class="pred-list" aria-live="polite"></div>
           <p class="msg" id="pred-msg"></p>
-          <p class="fine">Markets without a real data feed (Safaricom, Nasdaq 100) are not predicted rather than guessed. Predictions describe what indicators show now. They can and do fail.</p>
+          <p class="fine">Markets without a real data feed are left out rather than guessed.</p>
+        </div>
+      </section>
+
+      <section data-panel="guide" hidden>
+        <div class="sheet gold-sheet">
+          <h2>How to read a Golden prediction</h2>
+          <ol class="guide-steps">
+            <li><strong>Start with the bias.</strong> Bullish means the checks lean up, bearish means they lean down, neutral means they disagree and there is no edge to size a trade around.</li>
+            <li><strong>Check the strength.</strong> It counts how many of the four checks (trend, momentum, volatility, position in range) agree. More agreement means a cleaner picture, not a guaranteed result.</li>
+            <li><strong>Use the levels as a plan.</strong> The stop sits 1.5 ATR from the entry. Target 1 is the same distance as the stop away, target 2 is twice that, so the first target already pays for the stop.</li>
+            <li><strong>Open &ldquo;Why this reading&rdquo;.</strong> Compare the reasons with the chart in the Trading Arena. If you can&rsquo;t see it yourself, skip it.</li>
+            <li><strong>Practise it first.</strong> Place the levels as a practice trade in the arena and write your reason in the journal. Then you can see how the reading performs for you.</li>
+          </ol>
+          <div class="cta-row"><a class="btn btn-primary" href="markets.html">Open the Trading Arena</a><a class="btn btn-ghost" href="glossary.html">Glossary</a></div>
         </div>
       </section>
 
@@ -78,7 +127,7 @@
             <div class="cta-row"><button type="button" class="btn btn-primary" id="deriv-save">Save link</button><a class="btn btn-ghost" id="deriv-signup" href="#" target="_blank" rel="noopener">Create a Deriv account</a></div>
             <p class="msg" id="deriv-msg"></p>
           </div>
-          <p class="fine">If you open a Deriv account through Modefx and Modefx earns a referral fee, that will be disclosed here before launch. Trading real markets can lose you all the money you put in.</p>
+          <p class="fine">If you open a Deriv account through Modefx and Modefx earns a referral fee, that will be disclosed here before launch.</p>
         </div>
       </section>
     </div>
@@ -86,7 +135,7 @@
 
   <footer class="footer">
     <div class="footer-brand"><img src="assets/mark.png" alt="" width="34" height="23"><span>Modefx</span></div>
-    <p>Modefx provides simulated trading and educational content only. It is not a broker, does not hold client funds and does not provide investment advice. Trading real markets involves significant risk of loss.</p>
+    <p>Modefx is an education and practice platform. It is not a broker and does not hold client funds.</p>
     <p class="fine">&copy; <span id="year"></span> Modefx</p>
   </footer>
   <nav class="tabbar" aria-label="Main"><a href="index.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Home</span></a><a href="markets.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l5-5 4 4 8-9"/><path d="M15 7h5v5"/></svg><span>Markets</span></a><a href="lessons.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span>Lessons</span></a><a href="golden.html" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.5 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/></svg><span>Golden</span></a><a href="plans.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><path d="M9 6v12" stroke-dasharray="2 3"/></svg><span>Plans</span></a><a href="account.html"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg><span>Account</span></a></nav>
@@ -95,6 +144,7 @@
   <script src="app.js" defer></script>
   <script src="effects.js" defer></script>
   <script src="golden.js" defer></script>
+  <script src="levels.js" defer></script>
   <script src="site.js" defer></script>
 </body>
 </html>
