@@ -43,10 +43,11 @@ window.MODEFX_CONFIG = {
       line: "For traders who want deeper tools and the community.",
       features: [
         "Everything in Growth, unlocked forever",
-        "AI market explainers and journal review",
-        "Economic calendar with plain-language notes",
-        "Post and comment in the community",
-        "Strategy documentation tools"
+        "22 advanced lessons with calculators",
+        "Market explainers and an automated journal review",
+        "Economic calendar in Nairobi time, with plain-language notes",
+        "Strategy playbook with pre-trade checklists",
+        "Community board: post and comment"
       ]
     },
     {

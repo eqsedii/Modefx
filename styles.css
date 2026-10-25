@@ -351,3 +351,71 @@ body[data-page="instrument"] { padding-bottom: calc(5.4rem + env(safe-area-inset
 .diagram svg { width: 100%; height: auto; display: block; }
 textarea.demo-input { resize: vertical; min-height: 5.5rem; font-family: var(--body); }
 .demo-preview { margin-top: .8rem; padding: .7rem .9rem; background: rgba(3, 6, 15, .6); border: 1px solid var(--line); border-radius: 8px; }
+
+/* ---------------- Pro area ---------------- */
+.subtabs { display: flex; gap: .4rem; overflow-x: auto; padding: .25rem; margin-bottom: 1.2rem; background: rgba(3, 6, 15, .6); border-radius: 12px; position: sticky; top: .4rem; z-index: 5; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.subtabs::-webkit-scrollbar { display: none; }
+.subtabs button { flex: 1 0 auto; font: 600 .9rem var(--body); color: var(--mute); background: none; border: 0; border-radius: 9px; padding: .65rem 1rem; cursor: pointer; white-space: nowrap; }
+.subtabs button[aria-selected="true"] { color: #fff; background: rgba(30, 107, 255, .35); box-shadow: 0 0 14px rgba(30, 107, 255, .35); }
+[data-panel] { display: grid; gap: 1.2rem; }
+[data-panel][hidden] { display: none; }
+.cat-head { font: 600 .8rem var(--body); text-transform: uppercase; letter-spacing: .06em; color: var(--cyan); margin: 1.2rem 0 .6rem; }
+.cat-head:first-child { margin-top: 0; }
+.pro-lesson { padding: 0; margin-bottom: .8rem; }
+.pro-lesson > summary { list-style: none; cursor: pointer; display: flex; gap: .8rem; align-items: center; padding: 1rem 1.1rem; font: 600 1rem/1.35 var(--display); }
+.pro-lesson > summary::-webkit-details-marker { display: none; }
+.pro-lesson .lnum { flex: none; width: 1.9rem; height: 1.9rem; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line-strong); color: var(--cyan); font-size: .85rem; }
+.pro-lesson .ltitle { flex: 1; }
+.pro-lesson .ldone { color: var(--ok); font-size: 1.1rem; }
+.pro-lesson > summary::after { content: ""; flex: none; width: .55rem; height: .55rem; border-right: 2px solid var(--cyan); border-bottom: 2px solid var(--cyan); transform: rotate(45deg); transition: transform .2s; }
+.pro-lesson[open] > summary::after { transform: rotate(-135deg); }
+.pro-lesson .lbody { padding: 0 1.1rem 1.1rem; }
+.pro-lesson .lbody p { color: var(--mute); margin-bottom: .8rem; line-height: 1.6; }
+.pro-lesson .lbody strong { color: var(--silver); }
+.field-row { display: grid; gap: .35rem; margin-bottom: .9rem; }
+.field-row label { font-size: .85rem; color: var(--mute); }
+select.demo-input { appearance: auto; }
+.demo-input.compact { width: auto; max-width: 11rem; padding: .45rem .6rem; }
+.head-row { display: flex; justify-content: space-between; align-items: center; gap: .8rem; margin-bottom: .9rem; flex-wrap: wrap; }
+.head-row h2 { margin: 0 !important; }
+.btn-row { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; margin-top: .6rem; }
+.plain-list { margin: 0; padding-left: 1.1rem; display: grid; gap: .5rem; color: var(--mute); font-size: .95rem; }
+.plain-list strong { color: var(--silver); }
+.stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: .6rem; margin: .4rem 0 1rem; }
+@media (min-width: 640px) { .stat-grid { grid-template-columns: repeat(4, 1fr); } }
+.stat { background: rgba(3, 6, 15, .55); border: 1px solid var(--line); border-radius: 12px; padding: .7rem .8rem; display: grid; gap: .15rem; }
+.stat span { font-size: .75rem; color: var(--mute); }
+.stat strong { font: 600 1.05rem var(--display); overflow-wrap: anywhere; }
+.report h3 { font-size: 1rem; margin: 1.1rem 0 .4rem; }
+.report p { color: var(--mute); margin-bottom: .6rem; line-height: 1.6; }
+.report strong { color: var(--silver); }
+.findings { list-style: none; margin: 0 0 1rem; padding: 0; display: grid; gap: .6rem; }
+.finding { display: flex; gap: .7rem; align-items: flex-start; padding: .7rem .8rem; border-radius: 12px; border: 1px solid var(--line); background: rgba(3, 6, 15, .5); font-size: .94rem; line-height: 1.5; }
+.ficon { flex: none; width: 1.4rem; height: 1.4rem; display: grid; place-items: center; border-radius: 50%; font: 700 .8rem var(--body); }
+.finding.good { border-color: rgba(61, 220, 151, .4); } .finding.good .ficon { background: rgba(61, 220, 151, .18); color: var(--ok); }
+.finding.warn { border-color: rgba(255, 122, 136, .45); } .finding.warn .ficon { background: rgba(255, 122, 136, .18); color: var(--err); }
+.finding.info .ficon { background: rgba(34, 211, 255, .15); color: var(--cyan); }
+.ok { color: var(--ok); } .err { color: var(--err); }
+.cal-item { border-top: 1px solid var(--line); }
+.cal-item:first-child { border-top: 0; }
+.cal-item > summary { list-style: none; cursor: pointer; display: flex; flex-wrap: wrap; gap: .3rem .6rem; align-items: center; padding: .85rem 0; }
+.cal-item > summary::-webkit-details-marker { display: none; }
+.cal-when { flex: 0 0 100%; font-size: .8rem; color: var(--cyan); }
+.cal-name { flex: 1 1 12rem; font-weight: 600; }
+.cal-body { padding: 0 0 1rem; }
+.cal-body p { color: var(--mute); margin-bottom: .5rem; font-size: .93rem; line-height: 1.55; }
+.cal-body strong { color: var(--silver); }
+.tag { display: inline-block; font: 600 .7rem var(--body); color: var(--mute); border: 1px solid var(--line-strong); border-radius: 999px; padding: .15rem .55rem; }
+.tag.hi, .tag.err { color: var(--err); border-color: rgba(255, 122, 136, .5); }
+.post { padding: 1rem 0; border-top: 1px solid var(--line); }
+.post:first-child { border-top: 0; padding-top: 0; }
+.post h3 { font-size: 1.05rem; margin: .4rem 0; }
+.post-head { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+.post-body { color: var(--mute); white-space: pre-wrap; overflow-wrap: anywhere; }
+.err-link { color: var(--err); }
+.comments { margin-top: .6rem; padding-left: .8rem; border-left: 2px solid var(--line-strong); display: grid; gap: .6rem; }
+.comment p { color: var(--mute); margin: .15rem 0 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .93rem; }
+.comment-form { display: grid; grid-template-columns: 1fr auto; gap: .5rem; align-items: center; }
+.comment-form .msg { grid-column: 1 / -1; margin: 0; min-height: 0; }
+.page > *, #pro-app, [data-panel], .sheet, .pro-lesson, .report { min-width: 0; max-width: 100%; }
+.tools-grid > label { min-width: 0; }

@@ -346,13 +346,6 @@
       } finally { btn.disabled = false; }
     });
 
-    $("#google").addEventListener("click", async () => {
-      const client = await getSB();
-      if (!client) return notConnected();
-      const { error } = await Loader.run(client.auth.signInWithOAuth({ provider: "google", options: { redirectTo: ACCOUNT_URL } }));
-      if (error) msg(authMsg, friendly(error));
-    });
-
     $("#forgot").addEventListener("click", async () => {
       const email = $("#email").value.trim();
       if (!validEmail(email)) return msg(authMsg, "Enter your email above, then tap Forgot password again.");
