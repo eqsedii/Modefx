@@ -1,8 +1,8 @@
 /* Public, client-side settings. Never put secret keys in this file.
    The Supabase anon key is designed to be public; access is enforced by RLS in supabase/schema.sql. */
 window.MODEFX_CONFIG = {
-  supabaseUrl: "https://qkloaanflkepvucycgrf.supabase.co",       // e.g. https://abcd1234.supabase.co
-  supabaseAnonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFrbG9hYW5mbGtlcHZ1Y3ljZ3JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxMjM4OTYsImV4cCI6MjEwNTY5OTg5Nn0.-yOY5PNX50tucnck-UkSEGrXYdh94k7kwg2VGmuwKno",   // Project Settings > API > anon public key
+  supabaseUrl: "https://aicrlpbnvbwpmjlgoddw.supabase.co",       // e.g. https://abcd1234.supabase.co
+  supabaseAnonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpY3JscGJudmJ3cG1qbGdvZGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI5MTUwNDQsImV4cCI6MjEwODQ5MTA0NH0.fIeszV6BxXjWJtmMTo9dey3VniEtFqshR4XS1fKgZaw",   // Project Settings > API > anon public key
   apiBase: "https://modefx.vercel.app",           // "" = same origin (Vercel). Set a full URL if the API lives elsewhere.
 
   // Shown in the Help section. Leave both empty to hide the section.
@@ -24,7 +24,7 @@ window.MODEFX_CONFIG = {
         "Simulated trading account with a virtual balance",
         "Basic trade journal, up to 20 entries",
         "Daily plain-language market summary",
-        "5 starter lessons"
+        "10 starter lessons"
       ]
     },
     {
