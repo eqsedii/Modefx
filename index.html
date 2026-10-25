@@ -6,6 +6,8 @@
   <title>Modefx: practice trading with virtual money</title>
   <meta name="description" content="Modefx is a simulated trading and learning platform. Practice with virtual money, keep a trade journal, and learn the markets in plain English. Not a broker. No guaranteed profits.">
   <meta name="theme-color" content="#03060F">
+  <meta property="og:title" content="Modefx: practice trading with virtual money"><meta property="og:description" content="Simulated trading account, trade journal and 32 lessons for Kenyan traders. Pay with M-Pesa."><meta property="og:type" content="website"><meta property="og:image" content="assets/logo-800.png"><meta name="twitter:card" content="summary_large_image">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"EducationalOrganization","name":"Modefx","description":"Simulated trading and learning platform for Kenya.","url":"https://eqsedii.github.io/Modefx/","logo":"https://eqsedii.github.io/Modefx/assets/logo-800.png"}</script>
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png">
   <link rel="apple-touch-icon" href="assets/icon-180.png">
   <link rel="manifest" href="manifest.webmanifest">
@@ -71,6 +73,11 @@
       <div class="board" id="board"></div>
     </section>
 
+    <div class="duo reveal">
+      <section class="sheet"><h2>Market sessions</h2><p class="sheet-sub">When the big forex centres are open, in Nairobi time.</p><div id="sessions" class="sessions"></div></section>
+      <section class="sheet"><h2>Market heatmap</h2><p class="sheet-sub">Greener means stronger over 24 hours. Tap a tile for the chart.</p><div id="heat" class="heat"></div></section>
+    </div>
+
     <section class="sheet reveal">
       <h2>How Modefx works</h2>
       <ol class="steps">
@@ -79,6 +86,19 @@
         <li><div><strong>Journal every trade</strong><p>Write why you entered and how you felt. Modefx turns it into win rate, drawdown and risk.</p></div></li>
         <li><div><strong>Learn, then step up</strong><p>Lessons and tools unlock as you climb the plans. Real money stays at your own broker.</p></div></li>
       </ol>
+    </section>
+
+    <section class="sheet reveal">
+      <h2>Risk calculator</h2>
+      <p class="sheet-sub">Work out how big a trade can be before you place it. Use the same currency for your balance and the price.</p>
+      <form id="calc" class="calc" onsubmit="return false">
+        <div class="field-row"><label for="c-bal">Account balance</label><input class="demo-input" id="c-bal" type="number" inputmode="decimal" value="10000" min="0"></div>
+        <div class="field-row"><label for="c-risk">Risk per trade (%)</label><input class="demo-input" id="c-risk" type="number" inputmode="decimal" value="1" min="0" max="100" step="0.1"></div>
+        <div class="field-row"><label for="c-en">Entry price</label><input class="demo-input" id="c-en" type="number" inputmode="decimal" value="1.0850" step="any"></div>
+        <div class="field-row"><label for="c-sl">Stop-loss price</label><input class="demo-input" id="c-sl" type="number" inputmode="decimal" value="1.0820" step="any"></div>
+        <dl class="calc-out"><div><dt>Amount at risk</dt><dd id="c-amt">-</dd></div><div><dt>Units you can trade</dt><dd id="c-units">-</dd></div><div><dt>1:2 target price</dt><dd id="c-t2">-</dd></div></dl>
+        <p class="fine calc-note" id="c-note" aria-live="polite"></p>
+      </form>
     </section>
 
     <section class="sheet reveal">
@@ -94,10 +114,26 @@
     </section>
 
     <section class="sheet reveal">
+      <h2>Built to be trusted</h2>
+      <div class="trust">
+        <div><strong>Payments confirmed by the server</strong><p>A plan unlocks only after M-Pesa confirms the payment, never because a browser said so.</p></div>
+        <div><strong>We never hold your money</strong><p>Modefx is not a broker. Real trading stays at a licensed broker of your choice.</p></div>
+        <div><strong>Your data stays yours</strong><p>Database rules limit every member to their own trades, journal and payments.</p></div>
+        <div><strong>Honest labels</strong><p>Practice prices and results are marked as simulated, and predictions are marked as educational.</p></div>
+      </div>
+    </section>
+
+    <section class="sheet reveal">
       <h2>Four plans, one ladder</h2>
       <p class="sheet-sub">Each plan unlocks once you own the one before it. Once bought, Growth, Pro and Golden stay unlocked forever.</p>
       <div class="ladder" id="home-ladder"></div>
       <div class="cta-row" style="margin-top:1.2rem"><a class="btn btn-ghost" href="plans.html">Compare plans</a></div>
+    </section>
+
+    <section class="sheet reveal">
+      <div class="gold-head"><h2>Insights</h2><a class="link" href="insights.html">All articles</a></div>
+      <div class="arts" id="teasers"></div>
+      <p class="fine" style="margin-top:1rem">Unsure of a word? The <a class="link" href="glossary.html">trading glossary</a> explains it in plain English.</p>
     </section>
 
     <section class="sheet reveal">
@@ -106,6 +142,11 @@
       <details class="faq"><summary>Are the prices real?</summary><p>Some are. Where a real price feed is connected the chart is lined up to it and labelled. Everything else is a simulated practice price, labelled as such.</p></details>
       <details class="faq"><summary>Can I make money with Modefx?</summary><p>Modefx teaches and lets you practice. It cannot promise profits and nothing on the site is financial advice. Trading real markets can lose you all the money you put in.</p></details>
       <details class="faq"><summary>How do I pay?</summary><p>With M-Pesa. A plan unlocks only after the payment is confirmed by our server.</p></details>
+    </section>
+    <section class="cta-band reveal">
+      <h2>Make your first mistakes with virtual money.</h2>
+      <p>Starter is KSh 99 and unlocks the simulated account, the journal and your first lessons.</p>
+      <a class="btn btn-primary" href="account.html?mode=signup">Start practicing</a>
     </section>
   </main>
   <footer class="footer">
@@ -117,6 +158,9 @@
   <script src="config.js"></script>
   <script src="market-engine.js" defer></script>
   <script src="app.js" defer></script>
+  <script src="insights-data.js"></script>
   <script src="effects.js" defer></script>
+  <script src="home.js" defer></script>
+  <script src="site.js" defer></script>
 </body>
 </html>

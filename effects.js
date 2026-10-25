@@ -18,9 +18,10 @@
     el.innerHTML = '<div class="tape-track"></div>';
     nav.after(el);
     const track = $(".tape-track", el);
+    const prev = {};
     const items = () => M.SYMS.map((s) => {
-      const d = M.dailyStats(s);
-      return `<a class="tick ${d.chgPct >= 0 ? "up" : "dn"}" href="instrument.html?symbol=${encodeURIComponent(s.sym)}"><b>${s.sym}</b><span>${M.fmtPrice(s, d.now)}</span><em>${sign(d.chgPct)}</em></a>`;
+      const d = M.dailyStats(s), p = prev[s.sym], fl = p == null || p === d.now ? "" : d.now > p ? " f-up" : " f-dn"; prev[s.sym] = d.now;
+      return `<a class="tick ${d.chgPct >= 0 ? "up" : "dn"}${fl}" href="instrument.html?symbol=${encodeURIComponent(s.sym)}"><b>${s.sym}</b><span>${M.fmtPrice(s, d.now)}</span><em>${sign(d.chgPct)}</em></a>`;
     }).join("");
     const paint = () => { const h = items(); track.innerHTML = h + h; }; // doubled so the loop is seamless
     paint(); setInterval(paint, 4000);
@@ -79,10 +80,11 @@
       const pts = v.map((x, i) => `${(i / 23 * 100).toFixed(1)},${(26 - ((x - mn) / r) * 24).toFixed(1)}`).join(" ");
       return `<svg viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>`;
     };
+    const prev = {};
     const paint = () => {
       el.innerHTML = M.SYMS.map((s) => {
-        const d = M.dailyStats(s), up = d.chgPct >= 0;
-        return `<a class="brow ${up ? "up" : "dn"}" href="instrument.html?symbol=${encodeURIComponent(s.sym)}">
+        const d = M.dailyStats(s), up = d.chgPct >= 0, p = prev[s.sym], fl = p == null || p === d.now ? "" : d.now > p ? " f-up" : " f-dn"; prev[s.sym] = d.now;
+        return `<a class="brow ${up ? "up" : "dn"}${fl}" href="instrument.html?symbol=${encodeURIComponent(s.sym)}">
           <span class="bname"><strong>${s.sym}</strong><small>${esc(s.nm)}</small></span>
           <span class="bspark">${spark(s)}</span>
           <span class="bpx">${M.fmtPrice(s, d.now)}</span>
